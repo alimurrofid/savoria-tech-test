@@ -1,0 +1,53 @@
+<?php
+
+namespace {{ namespace }};
+
+use App\Traits\ApiResponse;
+use {{ namespacedModel }};
+use {{ rootNamespace }}Http\Controllers\Controller;
+use {{ namespacedRequests }}
+
+class {{ class }} extends Controller
+{
+    use ApiResponse;
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        return $this->successResponse([]);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store({{ storeRequest }} $request)
+    {
+        return $this->successResponse([]);
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show({{ model }} ${{ modelVariable }})
+    {
+        return $this->successResponse(${{ modelVariable }});
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update({{ updateRequest }} $request, {{ model }} ${{ modelVariable }})
+    {
+        return $this->successResponse(${{ modelVariable }});
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy({{ model }} ${{ modelVariable }})
+    {
+        return $this->successResponse(null);
+    }
+}
