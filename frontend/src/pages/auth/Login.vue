@@ -43,7 +43,7 @@ const submit = async () => {
             v-model="email"
             placeholder="admin@example.com"
           />
-          
+
           <AppFormInput
             id="password"
             label="Password"
@@ -56,12 +56,7 @@ const submit = async () => {
             {{ errorMessage }}
           </div>
 
-          <AppButton 
-            type="submit" 
-            label="Sign In" 
-            class="w-full mt-2" 
-            :loading="loading" 
-          />
+          <AppButton type="submit" label="Sign In" class="w-full mt-2" :loading="loading" />
         </form>
       </template>
     </Card>

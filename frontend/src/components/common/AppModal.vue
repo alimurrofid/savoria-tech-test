@@ -2,7 +2,7 @@
 import Dialog from 'primevue/dialog';
 
 defineOptions({
-  inheritAttrs: false
+  inheritAttrs: false,
 });
 
 defineProps<{
@@ -27,15 +27,13 @@ const closeDialog = () => {
     <template #header v-if="$slots.header">
       <slot name="header"></slot>
     </template>
-    
+
     <div class="py-4">
       <slot></slot>
     </div>
-    
+
     <template #footer v-if="$slots.footer">
       <slot name="footer"></slot>
     </template>
-
-
   </Dialog>
 </template>

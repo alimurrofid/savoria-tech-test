@@ -2,7 +2,7 @@
 import DataTable from 'primevue/datatable';
 
 defineOptions({
-  inheritAttrs: false
+  inheritAttrs: false,
 });
 
 defineProps<{
@@ -22,15 +22,15 @@ defineProps<{
     v-bind="$attrs"
   >
     <slot></slot>
-    
+
     <template #header v-if="$slots.header">
       <slot name="header"></slot>
     </template>
-    
+
     <template #empty v-if="$slots.empty">
       <slot name="empty"></slot>
     </template>
-    
+
     <template #footer v-if="$slots.footer">
       <slot name="footer"></slot>
     </template>

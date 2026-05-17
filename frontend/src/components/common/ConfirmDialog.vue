@@ -2,7 +2,7 @@
 import ConfirmDialog from 'primevue/confirmdialog';
 
 defineOptions({
-  inheritAttrs: false
+  inheritAttrs: false,
 });
 </script>
 

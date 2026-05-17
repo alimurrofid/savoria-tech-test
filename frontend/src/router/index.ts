@@ -8,25 +8,26 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: () => import('@/pages/auth/Login.vue'),
-      meta: { requiresAuth: false }
+      meta: { requiresAuth: false },
     },
     {
       path: '/',
       component: () => import('@/components/layouts/AdminLayout.vue'),
       meta: { requiresAuth: true },
+      redirect: '/dashboard',
       children: [
         {
           path: '/dashboard',
           name: 'dashboard',
-          component: () => import('@/pages/dashboard/Index.vue')
+          component: () => import('@/pages/dashboard/Index.vue'),
         },
         {
           path: '/products',
           name: 'products',
-          component: () => import('@/pages/products/Index.vue')
-        }
-      ]
-    }
+          component: () => import('@/pages/products/Index.vue'),
+        },
+      ],
+    },
   ],
 });
 
@@ -36,8 +37,8 @@ router.beforeEach((to) => {
 
   if (to.meta.requiresAuth && !isAuthenticated) {
     return { name: 'login' };
-  } 
-  
+  }
+
   if (to.name === 'login' && isAuthenticated) {
     return { name: 'dashboard' };
   }
