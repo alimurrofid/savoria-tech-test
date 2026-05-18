@@ -7,6 +7,10 @@ import ApplicationForm from '@/components/applications/ApplicationForm.vue';
 import api from '@/services/api';
 import type { Application, ApiResponse } from '@/types/api';
 
+defineOptions({
+  name: 'ApplicationsShow',
+});
+
 const route = useRoute();
 const router = useRouter();
 const toast = useToast();

@@ -20,18 +20,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // ─── Departments ──────────────────────────────────────────────────────
         $hr      = Department::create(['name' => 'HR']);
         $it      = Department::create(['name' => 'IT']);
         $finance = Department::create(['name' => 'Finance']);
 
-        // ─── Roles ────────────────────────────────────────────────────────────
         $manager    = Role::create(['name' => 'Manager']);
         $staff      = Role::create(['name' => 'Staff']);
         $supervisor = Role::create(['name' => 'Supervisor']);
 
-        // ─── Users ────────────────────────────────────────────────────────────
-        // Admin user (no department / role — has full portal access)
         $admin = User::create([
             'name'     => 'Admin',
             'email'    => 'admin@test.com',
@@ -39,7 +35,6 @@ class DatabaseSeeder extends Seeder
             'is_admin' => true,
         ]);
 
-        // Regular users assigned to random departments & roles
         $departments = [$hr, $it, $finance];
         $roles       = [$manager, $staff, $supervisor];
 
@@ -70,7 +65,6 @@ class DatabaseSeeder extends Seeder
             'is_admin'      => false,
         ]);
 
-        // ─── Categories ───────────────────────────────────────────────────────
         $catEnterprise   = Category::create(['name' => 'Enterprise', 'description' => 'Enterprise applications']);
         $catHR           = Category::create(['name' => 'HR', 'description' => 'Human Resources applications']);
         $catFinance      = Category::create(['name' => 'Finance', 'description' => 'Finance and Accounting applications']);
@@ -81,7 +75,6 @@ class DatabaseSeeder extends Seeder
         $catAnalytics    = Category::create(['name' => 'Analytics', 'description' => 'Data and Analytics']);
         $catIT           = Category::create(['name' => 'IT', 'description' => 'IT Infrastructure']);
 
-        // ─── Applications ─────────────────────────────────────────────────────
         $apps = Application::insert([
             [
                 'name'        => 'ERP System',
@@ -175,21 +168,14 @@ class DatabaseSeeder extends Seeder
             ],
         ]);
 
-        // Fetch created records by name for pivot seeding
         $hris         = Application::where('name', 'HRIS')->first();
         $erp          = Application::where('name', 'ERP System')->first();
         $supportDesk  = Application::where('name', 'Support Desk')->first();
 
-        // ─── Pivot: Department Access ─────────────────────────────────────────
-        // HRIS → HR department
         $hris->departments()->attach($hr->id);
 
-        // ─── Pivot: Role Access ───────────────────────────────────────────────
-        // ERP System → Manager role
         $erp->roles()->attach($manager->id);
 
-        // ─── Pivot: Direct User Access ────────────────────────────────────────
-        // User 1 → Support Desk (direct access)
         $supportDesk->users()->attach($user1->id);
     }
 }

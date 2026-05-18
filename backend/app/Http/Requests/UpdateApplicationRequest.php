@@ -22,14 +22,13 @@ class UpdateApplicationRequest extends FormRequest
      */
     public function rules(): array
     {
-        // Ignore the current record's own ID when checking name uniqueness on update
         $applicationId = $this->route('application')?->id;
 
         return [
             'name'        => ['sometimes', 'required', 'string', 'max:255', "unique:applications,name,{$applicationId}"],
             'url'         => ['sometimes', 'required', 'url', 'max:2048'],
             'icon'        => ['nullable', 'string', 'max:100'],
-            'category_id' => ['sometimes', 'nullable', 'integer', 'exists:categories,id'],
+            'category_id' => ['sometimes', 'required', 'integer', 'exists:categories,id'],
             'description' => ['nullable', 'string', 'max:1000'],
         ];
     }

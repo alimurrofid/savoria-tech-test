@@ -69,7 +69,6 @@ class ApplicationController extends Controller
 
     /**
      * Remove the specified application.
-     * Cascade deletes on pivot tables are handled at the DB level.
      */
     public function destroy(Application $application)
     {

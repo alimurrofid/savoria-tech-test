@@ -7,6 +7,10 @@ import DepartmentForm from '@/components/departments/DepartmentForm.vue';
 import api from '@/services/api';
 import type { Department, ApiResponse } from '@/types/api';
 
+defineOptions({
+  name: 'DepartmentsShow',
+});
+
 const route = useRoute();
 const router = useRouter();
 const toast = useToast();

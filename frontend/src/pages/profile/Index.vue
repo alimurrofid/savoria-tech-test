@@ -8,6 +8,10 @@ import { useAuthStore } from '@/stores/auth';
 import api from '@/services/api';
 import type { ApiResponse, User } from '@/types/api';
 
+defineOptions({
+  name: 'ProfileIndex',
+});
+
 const toast = useToast();
 const authStore = useAuthStore();
 
@@ -43,7 +47,6 @@ const handleSave = async () => {
 
     const { data } = await api.put<ApiResponse<User>>('/profile', payload);
 
-    // Update the stored user in the auth store & localStorage
     authStore.user = data.data;
     localStorage.setItem('user', JSON.stringify(data.data));
 
@@ -55,18 +58,30 @@ const handleSave = async () => {
       detail: 'Profile updated successfully.',
       life: 3000,
     });
-  } catch (err: any) {
-    const backendErrors = err?.response?.data?.errors ?? {};
+  } catch (err: unknown) {
+    const response =
+      typeof err === 'object' && err !== null && 'response' in err
+        ? (
+            err as {
+              response?: {
+                data?: { errors?: Record<string, string[] | string>; message?: string };
+              };
+            }
+          ).response
+        : undefined;
+    const backendErrors = response?.data?.errors ?? {};
     Object.keys(backendErrors).forEach((key) => {
-      errors.value[key] = Array.isArray(backendErrors[key])
-        ? backendErrors[key][0]
-        : backendErrors[key];
+      const value = backendErrors[key];
+      if (!value) {
+        return;
+      }
+      errors.value[key] = Array.isArray(value) ? (value[0] ?? '') : value;
     });
     if (!Object.keys(errors.value).length) {
       toast.add({
         severity: 'error',
         summary: 'Error',
-        detail: err?.response?.data?.message ?? 'Failed to save.',
+        detail: response?.data?.message ?? 'Failed to save.',
         life: 3000,
       });
     }

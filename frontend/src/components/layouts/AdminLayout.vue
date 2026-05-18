@@ -15,7 +15,6 @@ const toggleSidebar = () => {
   isSidebarCollapsed.value = !isSidebarCollapsed.value;
 };
 
-// ─── Avatar dropdown menu ─────────────────────────────────────────────────────
 const userMenuRef = ref<InstanceType<typeof Menu> | null>(null);
 const toggleUserMenu = (event: Event) => userMenuRef.value?.toggle(event);
 
@@ -36,7 +35,6 @@ const userMenuItems = ref([
 
 <template>
   <div class="min-h-screen bg-slate-50 flex font-sans">
-    <!-- ─── Sidebar ──────────────────────────────────────────────────────── -->
     <aside
       :class="[
         'bg-white border-r border-slate-100 flex flex-col fixed h-full z-20 transition-all duration-300 ease-in-out',
@@ -259,7 +257,7 @@ const userMenuItems = ref([
       </div>
     </aside>
 
-    <!-- ─── Main Content ─────────────────────────────────────────────────── -->
+    <!-- Main Content -->
     <div
       :class="[
         'flex-1 flex flex-col min-w-0 transition-all duration-300 ease-in-out',

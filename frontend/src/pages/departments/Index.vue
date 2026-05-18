@@ -14,6 +14,10 @@ import type { ApiResponse, Department } from '@/types/api';
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 
+defineOptions({
+  name: 'DepartmentsIndex',
+});
+
 const toast = useToast();
 const confirm = useConfirm();
 const router = useRouter();
@@ -30,7 +34,7 @@ const fetchRecords = async () => {
   loading.value = true;
   try {
     const { data } = await api.get<ApiResponse<Department[]>>('/departments');
-    records.value = data.data as any[];
+    records.value = data.data;
   } catch {
     toast.add({
       severity: 'error',

@@ -11,10 +11,14 @@ import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
 import { useRouter } from 'vue-router';
 import api from '@/services/api';
-import type { ApiResponse, User } from '@/types/api';
+import type { ApiResponse, Department, Role, User } from '@/types/api';
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import { useAuthStore } from '@/stores/auth';
+
+defineOptions({
+  name: 'UsersIndex',
+});
 
 const authStore = useAuthStore();
 
@@ -22,7 +26,9 @@ const toast = useToast();
 const confirm = useConfirm();
 const router = useRouter();
 
-const records = ref<User[]>([]);
+type UserWithRelations = User & { department?: Department | null; role?: Role | null };
+
+const records = ref<UserWithRelations[]>([]);
 const loading = ref(false);
 const dt = ref();
 
@@ -33,7 +39,7 @@ const filters = ref({
 const fetchRecords = async () => {
   loading.value = true;
   try {
-    const { data } = await api.get<ApiResponse<User[]>>('/users');
+    const { data } = await api.get<ApiResponse<UserWithRelations[]>>('/users');
     records.value = data.data;
   } catch {
     toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load users.', life: 3000 });
@@ -132,13 +138,13 @@ const handleDelete = (row: User) => {
 
         <Column header="Department" style="width: 140px">
           <template #body="{ data }">
-            <span class="text-slate-600 text-sm">{{ (data as any).department?.name ?? '—' }}</span>
+            <span class="text-slate-600 text-sm">{{ data.department?.name ?? '—' }}</span>
           </template>
         </Column>
 
         <Column header="Role" style="width: 130px">
           <template #body="{ data }">
-            <span class="text-slate-600 text-sm">{{ (data as any).role?.name ?? '—' }}</span>
+            <span class="text-slate-600 text-sm">{{ data.role?.name ?? '—' }}</span>
           </template>
         </Column>
 

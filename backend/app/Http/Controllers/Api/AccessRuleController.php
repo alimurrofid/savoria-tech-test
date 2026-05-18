@@ -61,7 +61,6 @@ class AccessRuleController extends Controller
 
         $entity = $this->resolveEntity($type, $id);
 
-        // sync() efficiently handles all attach/detach in one DB operation
         $entity->applications()->sync($request->input('application_ids', []));
 
         $updated = $entity->applications()->get();

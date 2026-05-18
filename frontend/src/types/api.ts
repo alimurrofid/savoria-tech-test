@@ -1,8 +1,5 @@
-// ─── Backend-aligned API response wrappers ───────────────────────────────────
-
 /**
  * Standard API response from the backend ApiResponse trait.
- * successResponse() → { success: true, message: string, data: T }
  */
 export interface ApiResponse<T> {
   success: boolean;
@@ -12,7 +9,6 @@ export interface ApiResponse<T> {
 
 /**
  * Paginated API response from paginatedResponse().
- * Includes a meta block with pagination info.
  */
 export interface PaginatedApiResponse<T> {
   success: boolean;
@@ -31,8 +27,6 @@ export interface PaginatedApiResponse<T> {
     };
   };
 }
-
-// ─── Domain Interfaces ───────────────────────────────────────────────────────
 
 export interface User {
   id: number;
@@ -86,8 +80,7 @@ export interface UserAppAccess {
 }
 
 /**
- * Row shape returned by the Report API
- * GET /api/reports/user-access
+ * Row shape returned by the Report API.
  */
 export interface UserAccessReport {
   id: number;
@@ -95,8 +88,6 @@ export interface UserAccessReport {
   email: string;
   applications: UserAppAccess[];
 }
-
-// ─── Access Rule payload ──────────────────────────────────────────────────────
 
 /** Valid entity types for the AccessRuleController */
 export type AccessEntityType = 'department' | 'role' | 'user';

@@ -5,6 +5,10 @@ import Card from 'primevue/card';
 import AppFormInput from '@/components/common/AppFormInput.vue';
 import AppButton from '@/components/common/AppButton.vue';
 
+defineOptions({
+  name: 'AuthLogin',
+});
+
 const authStore = useAuthStore();
 
 const email = ref('');
@@ -17,8 +21,12 @@ const submit = async () => {
   errorMessage.value = '';
   try {
     await authStore.login({ email: email.value, password: password.value });
-  } catch (error: any) {
-    errorMessage.value = error.response?.data?.message || 'Login failed. Please try again.';
+  } catch (error: unknown) {
+    const message =
+      typeof error === 'object' && error !== null && 'response' in error
+        ? (error as { response?: { data?: { message?: string } } }).response?.data?.message
+        : undefined;
+    errorMessage.value = message || 'Login failed. Please try again.';
   } finally {
     loading.value = false;
   }

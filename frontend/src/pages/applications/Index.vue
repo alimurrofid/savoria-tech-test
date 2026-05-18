@@ -11,15 +11,18 @@ import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
 import { useRouter } from 'vue-router';
 import api from '@/services/api';
-import type { Application, ApiResponse } from '@/types/api';
+import type { Application, PaginatedApiResponse } from '@/types/api';
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
+
+defineOptions({
+  name: 'ApplicationsIndex',
+});
 
 const toast = useToast();
 const confirm = useConfirm();
 const router = useRouter();
 
-// ─── State ────────────────────────────────────────────────────────────────────
 const records = ref<Application[]>([]);
 const loading = ref(false);
 const dt = ref();
@@ -27,16 +30,13 @@ const dt = ref();
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
 });
-
-// ─── Fetch ────────────────────────────────────────────────────────────────────
 const fetchRecords = async () => {
   loading.value = true;
   try {
-    // Fetch all pages — client-side filtering via PrimeVue DataTable
-    const { data } = await api.get<ApiResponse<Application[]>>('/applications', {
+    const { data } = await api.get<PaginatedApiResponse<Application>>('/applications', {
       params: { page: 1, search: '' },
     });
-    records.value = (data as any).data ?? data;
+    records.value = data.data;
   } catch {
     toast.add({
       severity: 'error',
@@ -51,7 +51,6 @@ const fetchRecords = async () => {
 
 onMounted(fetchRecords);
 
-// ─── Routing ──────────────────────────────────────────────────────────────────
 const openCreate = () => router.push({ name: 'applications.create' });
 const openEdit = (row: Application) =>
   router.push({ name: 'applications.edit', params: { id: row.id } });

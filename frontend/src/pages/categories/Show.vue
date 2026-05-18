@@ -7,6 +7,10 @@ import CategoryForm from '@/components/categories/CategoryForm.vue';
 import api from '@/services/api';
 import type { Category, ApiResponse } from '@/types/api';
 
+defineOptions({
+  name: 'CategoriesShow',
+});
+
 const route = useRoute();
 const router = useRouter();
 const toast = useToast();

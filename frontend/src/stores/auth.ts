@@ -26,9 +26,7 @@ export const useAuthStore = defineStore('auth', () => {
   const logout = async () => {
     try {
       await api.post('/logout');
-    } catch {
-      // Ignore error if already unauthenticated
-    }
+    } catch {}
     token.value = null;
     user.value = null;
 

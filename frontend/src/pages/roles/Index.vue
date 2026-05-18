@@ -14,6 +14,10 @@ import type { ApiResponse, Role } from '@/types/api';
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 
+defineOptions({
+  name: 'RolesIndex',
+});
+
 const toast = useToast();
 const confirm = useConfirm();
 const router = useRouter();
@@ -29,7 +33,7 @@ const fetchRecords = async () => {
   loading.value = true;
   try {
     const { data } = await api.get<ApiResponse<Role[]>>('/roles');
-    records.value = data.data as any[];
+    records.value = data.data;
   } catch {
     toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load roles.', life: 3000 });
   } finally {

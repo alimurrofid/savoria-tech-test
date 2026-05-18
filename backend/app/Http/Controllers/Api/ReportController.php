@@ -47,16 +47,15 @@ class ReportController extends Controller
             ->groupBy('users.id', 'users.name', 'users.email')
             ->orderBy('users.name');
 
-        $users = $query->get();
+        $users = $query->paginate(10);
 
-        // Decode the JSON string to an array for the response
-        $users->transform(function ($user) {
+        $users->getCollection()->transform(function ($user) {
             $user->applications = is_string($user->applications) 
                 ? json_decode($user->applications, true) 
                 : $user->applications;
             return $user;
         });
 
-        return $this->successResponse($users);
+        return $this->paginatedResponse($users);
     }
 }

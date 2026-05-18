@@ -7,6 +7,10 @@ import RoleForm from '@/components/roles/RoleForm.vue';
 import api from '@/services/api';
 import type { Role, ApiResponse } from '@/types/api';
 
+defineOptions({
+  name: 'RolesEdit',
+});
+
 const route = useRoute();
 const router = useRouter();
 const toast = useToast();
@@ -44,11 +48,15 @@ const handleFormSubmit = async (payload: { name: string }) => {
       life: 3000,
     });
     router.push({ name: 'roles.index' });
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const message =
+      typeof err === 'object' && err !== null && 'response' in err
+        ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+        : undefined;
     toast.add({
       severity: 'error',
       summary: 'Error',
-      detail: err?.response?.data?.message ?? 'An error occurred.',
+      detail: message ?? 'An error occurred.',
       life: 4000,
     });
   } finally {

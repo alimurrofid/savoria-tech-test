@@ -7,6 +7,10 @@ import DepartmentForm from '@/components/departments/DepartmentForm.vue';
 import api from '@/services/api';
 import type { Department, ApiResponse } from '@/types/api';
 
+defineOptions({
+  name: 'DepartmentsEdit',
+});
+
 const route = useRoute();
 const router = useRouter();
 const toast = useToast();
@@ -18,8 +22,7 @@ const department = ref<Department | null>(null);
 onMounted(async () => {
   loading.value = true;
   try {
-    // Note: DepartmentController doesn't have a show method by default, we need to handle this.
-    // However, the backend route was created with except(['show']). Let's fetch the list and find it.
+    // Backend omits the show route; fetch list and resolve by id.
     const { data } = await api.get<ApiResponse<Department[]>>(`/departments`);
     const found = data.data.find((d) => d.id === Number(route.params.id));
     if (found) {
@@ -51,11 +54,15 @@ const handleFormSubmit = async (payload: { name: string }) => {
       life: 3000,
     });
     router.push({ name: 'departments.index' });
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const message =
+      typeof err === 'object' && err !== null && 'response' in err
+        ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+        : undefined;
     toast.add({
       severity: 'error',
       summary: 'Error',
-      detail: err?.response?.data?.message ?? 'An error occurred.',
+      detail: message ?? 'An error occurred.',
       life: 4000,
     });
   } finally {

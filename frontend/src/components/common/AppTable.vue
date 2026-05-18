@@ -6,7 +6,7 @@ defineOptions({
 });
 
 defineProps<{
-  value?: any[];
+  value?: Record<string, unknown>[];
   loading?: boolean;
 }>();
 </script>

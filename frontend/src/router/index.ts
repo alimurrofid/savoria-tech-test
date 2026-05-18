@@ -26,7 +26,6 @@ const router = createRouter({
           name: 'profile',
           component: () => import('@/pages/profile/Index.vue'),
         },
-        // ── Admin-only routes ─────────────────────────────────────────────────
         {
           path: '/applications',
           name: 'applications.index',
@@ -176,7 +175,6 @@ router.beforeEach((to) => {
     return { name: 'dashboard' };
   }
 
-  // Admin-only route accessed by a regular user → redirect silently
   if (to.meta.requiresAdmin && !authStore.user?.is_admin) {
     return { name: 'dashboard' };
   }

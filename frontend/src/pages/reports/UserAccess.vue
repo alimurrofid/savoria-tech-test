@@ -13,7 +13,6 @@ import InputIcon from 'primevue/inputicon';
 
 const toast = useToast();
 
-// ─── State ────────────────────────────────────────────────────────────────────
 const records = ref<UserAccessReport[]>([]);
 const loading = ref(false);
 const dt = ref();
@@ -22,12 +21,11 @@ const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
 });
 
-// ─── Fetch ────────────────────────────────────────────────────────────────────
 const fetchRecords = async () => {
   loading.value = true;
   try {
     const { data } = await api.get<ApiResponse<UserAccessReport[]>>('/reports/user-access');
-    records.value = data.data as any[];
+    records.value = data.data;
   } catch {
     toast.add({
       severity: 'error',

@@ -6,6 +6,10 @@ import { useToast } from 'primevue/usetoast';
 import RoleForm from '@/components/roles/RoleForm.vue';
 import api from '@/services/api';
 
+defineOptions({
+  name: 'RolesCreate',
+});
+
 const router = useRouter();
 const toast = useToast();
 const loading = ref(false);
@@ -21,11 +25,15 @@ const handleFormSubmit = async (payload: { name: string }) => {
       life: 3000,
     });
     router.push({ name: 'roles.index' });
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const message =
+      typeof err === 'object' && err !== null && 'response' in err
+        ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+        : undefined;
     toast.add({
       severity: 'error',
       summary: 'Error',
-      detail: err?.response?.data?.message ?? 'An error occurred.',
+      detail: message ?? 'An error occurred.',
       life: 4000,
     });
   } finally {

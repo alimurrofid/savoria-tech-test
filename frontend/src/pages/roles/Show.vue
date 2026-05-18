@@ -7,6 +7,10 @@ import RoleForm from '@/components/roles/RoleForm.vue';
 import api from '@/services/api';
 import type { Role, ApiResponse } from '@/types/api';
 
+defineOptions({
+  name: 'RolesShow',
+});
+
 const route = useRoute();
 const router = useRouter();
 const toast = useToast();

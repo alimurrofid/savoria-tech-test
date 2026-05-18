@@ -5,11 +5,13 @@ import Skeleton from 'primevue/skeleton';
 import api from '@/services/api';
 import type { ApiResponse, UserAppAccess } from '@/types/api';
 
-// ─── State ────────────────────────────────────────────────────────────────────
+defineOptions({
+  name: 'DashboardIndex',
+});
+
 const apps = ref<UserAppAccess[]>([]);
 const loading = ref(true);
 
-// ─── Fetch ────────────────────────────────────────────────────────────────────
 onMounted(async () => {
   try {
     const { data } = await api.get<ApiResponse<UserAppAccess[]>>('/dashboard');
@@ -18,8 +20,6 @@ onMounted(async () => {
     loading.value = false;
   }
 });
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
 const categoryColor = (category: string | null): string => {
   const map: Record<string, string> = {
     Enterprise: 'bg-violet-100 text-violet-700',

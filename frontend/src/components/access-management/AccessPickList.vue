@@ -1,10 +1,4 @@
 <script setup lang="ts">
-/**
- * AccessPickList — Dumb component
- *
- * Renders a two-panel list: Available (left) vs Assigned (right).
- * Emits the updated list of assigned application IDs on save.
- */
 import { ref, watch, computed } from 'vue';
 import Button from 'primevue/button';
 import type { Application } from '@/types/api';
@@ -19,12 +13,13 @@ const emit = defineEmits<{
   (e: 'save', applicationIds: number[]): void;
 }>();
 
-// ─── Internal lists (mirrored from props so we can mutate them) ───────────────
 const target = ref<Application[]>([]);
 const source = computed<Application[]>(() => {
   const assignedIds = new Set(target.value.map((a) => a.id));
   return props.all.filter((a) => !assignedIds.has(a.id));
 });
+
+const formatCategory = (category: Application['category']) => category?.name ?? '';
 
 watch(
   () => props.assigned,
@@ -34,7 +29,6 @@ watch(
   { immediate: true },
 );
 
-// ─── Move helpers ─────────────────────────────────────────────────────────────
 const moveToTarget = (app: Application) => {
   if (!target.value.find((a) => a.id === app.id)) {
     target.value.push(app);
@@ -91,7 +85,7 @@ const handleSave = () => {
             <div class="flex-1 min-w-0">
               <p class="text-sm font-semibold text-slate-700 truncate">{{ app.name }}</p>
               <p class="text-[10px] text-slate-400 uppercase tracking-wider">
-                {{ (app.category as any)?.name ?? app.category }}
+                {{ formatCategory(app.category) }}
               </p>
             </div>
             <i
@@ -151,7 +145,7 @@ const handleSave = () => {
             <div class="flex-1 min-w-0">
               <p class="text-sm font-semibold text-slate-700 truncate">{{ app.name }}</p>
               <p class="text-[10px] text-slate-400 uppercase tracking-wider">
-                {{ (app.category as any)?.name ?? app.category }}
+                {{ formatCategory(app.category) }}
               </p>
             </div>
             <i

@@ -10,10 +10,6 @@ defineProps<{
 }>();
 
 const emit = defineEmits(['update:visible']);
-
-const closeDialog = () => {
-  emit('update:visible', false);
-};
 </script>
 
 <template>

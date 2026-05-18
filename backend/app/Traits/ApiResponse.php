@@ -27,7 +27,7 @@ trait ApiResponse
     public function paginatedResponse(mixed $resource, string $message = 'Success', int $code = 200): JsonResponse
     {
         $response = $resource->response()->getData(true);
-        
+
         return response()->json([
             'success' => true,
             'message' => $message,

@@ -20,11 +20,17 @@ class CategoryController extends Controller
     public function index()
     {
         $search = request()->query('search');
+        $limit = request()->query('limit');
 
-        $categories = Category::query()
+        $query = Category::query()
             ->when($search, fn ($q) => $q->where('name', 'ilike', "%{$search}%"))
-            ->latest()
-            ->paginate(10);
+            ->latest();
+
+        if ($limit === 'all') {
+            return $this->successResponse(CategoryResource::collection($query->get()));
+        }
+
+        $categories = $query->paginate(10);
 
         return $this->paginatedResponse(CategoryResource::collection($categories));
     }

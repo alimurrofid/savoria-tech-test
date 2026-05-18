@@ -26,7 +26,7 @@ class StoreApplicationRequest extends FormRequest
             'name'        => ['required', 'string', 'max:255', 'unique:applications,name'],
             'url'         => ['required', 'url', 'max:2048'],
             'icon'        => ['nullable', 'string', 'max:100'],
-            'category_id' => ['nullable', 'integer', 'exists:categories,id'],
+            'category_id' => ['required', 'integer', 'exists:categories,id'],
             'description' => ['nullable', 'string', 'max:1000'],
         ];
     }

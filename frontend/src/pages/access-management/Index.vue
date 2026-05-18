@@ -14,20 +14,23 @@ import type {
   Application,
   AccessRulePayload,
   ApiResponse,
+  PaginatedApiResponse,
 } from '@/types/api';
+
+defineOptions({
+  name: 'AccessManagementIndex',
+});
 
 const toast = useToast();
 
 type EntityType = 'department' | 'role' | 'user';
 
-// Master data dari backend
 const allApplications = ref<Application[]>([]);
 const masterDepartments = ref<Department[]>([]);
 const masterRoles = ref<Role[]>([]);
 const masterUsers = ref<User[]>([]);
 const masterLoading = ref(true);
 
-// State Pilihan Admin
 const selectedDepartment = ref<number | null>(null);
 const selectedRole = ref<number | null>(null);
 const selectedUser = ref<number | null>(null);
@@ -36,7 +39,6 @@ const assigned = ref<Application[]>([]);
 const loadingAccess = ref(false);
 const saving = ref(false);
 
-// 1. LOGIKA FILTER: Filter daftar user berdasarkan Department & Role yang dipilih
 const filteredUsers = computed(() => {
   return masterUsers.value.filter((user) => {
     const matchDept = !selectedDepartment.value || user.department_id === selectedDepartment.value;
@@ -45,13 +47,11 @@ const filteredUsers = computed(() => {
   });
 });
 
-// 2. LOGIKA DETERMINASI TARGET: Menentukan entitas mana yang menjadi target penyimpanan utama
 const activeEntityType = computed<EntityType | null>(() => {
   if (selectedUser.value) return 'user';
   if (selectedRole.value && !selectedDepartment.value) return 'role';
   if (selectedDepartment.value && !selectedRole.value) return 'department';
-  // Jika memilih Dept dan Role bersamaan tanpa memilih User, kamu bisa menentukan kebijakan default,
-  // misal dalam kasus ini jika ingin melihat spesifik user di kombinasi itu, user harus dipilih.
+
   return null;
 });
 
@@ -68,12 +68,12 @@ onMounted(async () => {
       api.get<ApiResponse<Department[]>>('/departments'),
       api.get<ApiResponse<Role[]>>('/roles'),
       api.get<ApiResponse<User[]>>('/users'),
-      api.get<ApiResponse<Application[]>>('/applications', { params: { page: 1 } }),
+      api.get<PaginatedApiResponse<Application>>('/applications', { params: { page: 1 } }),
     ]);
     masterDepartments.value = deptRes.data.data;
     masterRoles.value = roleRes.data.data;
     masterUsers.value = userRes.data.data;
-    allApplications.value = (appRes.data as any).data ?? [];
+    allApplications.value = appRes.data.data;
   } catch {
     toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load data.', life: 3000 });
   } finally {
@@ -81,7 +81,6 @@ onMounted(async () => {
   }
 });
 
-// 3. LOGIKA TIMBAL BALIK: Jika User dipilih, otomatis set info Department dan Role milik user tersebut
 watch(selectedUser, (userId) => {
   if (userId) {
     const user = masterUsers.value.find((u) => u.id === userId);
@@ -92,7 +91,6 @@ watch(selectedUser, (userId) => {
   }
 });
 
-// Ambil data hak akses berdasarkan entitas aktif
 watch(activeEntityId, async (id) => {
   if (!id || !activeEntityType.value) {
     assigned.value = [];

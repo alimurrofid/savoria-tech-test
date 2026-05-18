@@ -4,22 +4,22 @@ import InputText from 'primevue/inputtext';
 import Textarea from 'primevue/textarea';
 import Button from 'primevue/button';
 import Select from 'primevue/select';
-import type { Application, Category, PaginatedApiResponse } from '@/types/api';
+import type { Application, Category, ApiResponse } from '@/types/api';
 import api from '@/services/api';
 
-// ─── Props & Emits ────────────────────────────────────────────────────────────
 const props = defineProps<{
   initialData?: Partial<Application> | null;
   loading?: boolean;
   disabled?: boolean;
 }>();
 
+type ApplicationPayload = Omit<Application, 'id' | 'created_at' | 'updated_at' | 'category'>;
+
 const emit = defineEmits<{
-  (e: 'submit', payload: Omit<Application, 'id' | 'created_at' | 'updated_at'>): void;
+  (e: 'submit', payload: ApplicationPayload): void;
   (e: 'cancel'): void;
 }>();
 
-// ─── Form State ───────────────────────────────────────────────────────────────
 const form = reactive({
   name: '',
   url: '',
@@ -52,11 +52,10 @@ const primeIcons = [
 const fetchCategories = async () => {
   loadingCategories.value = true;
   try {
-    const { data } = await api.get<PaginatedApiResponse<Category>>('/categories', {
-      params: { search: '' },
-    }); // get all without pagination limits or handle it properly later
-    // @ts-ignore
-    categories.value = data.data.data ?? data.data;
+    const { data } = await api.get<ApiResponse<Category[]>>('/categories', {
+      params: { search: '', limit: 'all' },
+    });
+    categories.value = data.data;
   } catch (e) {
     console.error('Failed to load categories', e);
   } finally {
@@ -66,7 +65,6 @@ const fetchCategories = async () => {
 
 onMounted(fetchCategories);
 
-// ─── Validation (PINDAH KE SINI) ──────────────────────────────────────────────
 const clearErrors = () => {
   errors.name = '';
   errors.url = '';
@@ -100,7 +98,6 @@ const validate = (): boolean => {
   return valid;
 };
 
-// Populate form when initialData changes (edit mode)
 watch(
   () => props.initialData,
   (data) => {
@@ -109,21 +106,21 @@ watch(
     form.icon = data?.icon ?? '';
     form.category_id = data?.category_id ?? null;
     form.description = data?.description ?? '';
-    clearErrors(); // Sekarang aman dipanggil karena fungsinya sudah dibuat di atas
+    clearErrors();
   },
   { immediate: true },
 );
 
-// ─── Submit ───────────────────────────────────────────────────────────────────
 const handleSubmit = () => {
   if (!validate()) return;
-  emit('submit', {
+  const payload: ApplicationPayload = {
     name: form.name.trim(),
     url: form.url.trim(),
     icon: form.icon.trim() || null,
     category_id: form.category_id,
     description: form.description.trim() || null,
-  } as any);
+  };
+  emit('submit', payload);
 };
 </script>
 

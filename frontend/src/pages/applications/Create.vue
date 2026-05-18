@@ -6,6 +6,10 @@ import { useToast } from 'primevue/usetoast';
 import ApplicationForm from '@/components/applications/ApplicationForm.vue';
 import api from '@/services/api';
 
+defineOptions({
+  name: 'ApplicationsCreate',
+});
+
 const router = useRouter();
 const toast = useToast();
 const loading = ref(false);
@@ -21,11 +25,15 @@ const handleFormSubmit = async (payload: Record<string, unknown>) => {
       life: 3000,
     });
     router.push({ name: 'applications.index' });
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const message =
+      typeof err === 'object' && err !== null && 'response' in err
+        ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+        : undefined;
     toast.add({
       severity: 'error',
       summary: 'Error',
-      detail: err?.response?.data?.message ?? 'An error occurred.',
+      detail: message ?? 'An error occurred.',
       life: 4000,
     });
   } finally {

@@ -7,6 +7,10 @@ import UserForm from '@/components/users/UserForm.vue';
 import api from '@/services/api';
 import type { User, Department, Role, ApiResponse } from '@/types/api';
 
+defineOptions({
+  name: 'UsersShow',
+});
+
 const route = useRoute();
 const router = useRouter();
 const toast = useToast();
