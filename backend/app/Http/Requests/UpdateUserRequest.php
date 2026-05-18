@@ -21,7 +21,7 @@ class UpdateUserRequest extends FormRequest
                 'email',
                 Rule::unique('users', 'email')->ignore($this->route('user')),
             ],
-            'password'      => ['nullable', 'string', 'min:8'],
+            'password'      => ['nullable', 'string', 'min:8', 'confirmed'],
             'department_id' => ['nullable', 'exists:departments,id'],
             'role_id'       => ['nullable', 'exists:roles,id'],
             'is_admin'      => ['boolean'],

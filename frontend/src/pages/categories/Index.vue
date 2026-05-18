@@ -85,7 +85,6 @@ const handleDelete = (row: Category) => {
 
 <template>
   <div class="max-w-7xl mx-auto space-y-6">
-    <ConfirmDialog />
 
     <div class="flex items-center justify-between">
       <div>

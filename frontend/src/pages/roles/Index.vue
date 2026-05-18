@@ -74,7 +74,6 @@ const handleDelete = (row: Role) => {
 
 <template>
   <div class="max-w-5xl mx-auto space-y-6">
-    <ConfirmDialog />
     <div class="flex items-center justify-between">
       <div>
         <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Roles</h1>

@@ -63,6 +63,10 @@ const handleSubmit = () => {
     errors.password = 'Password is required for new users.';
     valid = false;
   }
+  if (form.password && form.password !== form.password_confirmation) {
+    errors.password_confirmation = 'Passwords do not match.';
+    valid = false;
+  }
   if (!valid) return;
 
   const payload: Record<string, unknown> = {
@@ -72,7 +76,10 @@ const handleSubmit = () => {
     role_id: form.role_id,
     is_admin: form.is_admin,
   };
-  if (form.password) payload.password = form.password;
+  if (form.password) {
+    payload.password = form.password;
+    payload.password_confirmation = form.password_confirmation;
+  }
   emit('submit', payload);
 };
 </script>

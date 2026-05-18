@@ -34,6 +34,10 @@ onMounted(async () => {
 
 const handleSave = async () => {
   errors.value = {};
+  if (form.value.password && form.value.password !== form.value.password_confirmation) {
+    errors.value.password_confirmation = 'Passwords do not match.';
+    return;
+  }
   saving.value = true;
   try {
     const payload: Record<string, string> = {
@@ -171,7 +175,9 @@ const handleSave = async () => {
               toggleMask
               inputClass="w-full"
               class="w-full"
+              :class="{ 'p-invalid': errors.password_confirmation }"
             />
+            <small v-if="errors.password_confirmation" class="text-red-500 text-xs">{{ errors.password_confirmation }}</small>
           </div>
         </div>
 

@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class ReportController extends Controller
 {
@@ -41,11 +42,14 @@ class ReportController extends Controller
             ])
             ->leftJoin('view_user_application_access as v', 'users.id', '=', 'v.user_id')
             ->when($search, function ($q) use ($search) {
-                $q->where('users.name', 'ilike', "%{$search}%")
-                  ->orWhere('users.email', 'ilike', "%{$search}%");
+                $q->where(function ($sub) use ($search) {
+                    $sub->where('users.name', 'ilike', "%{$search}%")
+                        ->orWhere('users.email', 'ilike', "%{$search}%");
+                });
             })
             ->groupBy('users.id', 'users.name', 'users.email')
-            ->orderBy('users.name');
+            ->orderBy('users.name')
+            ->orderBy('users.id');
 
         $users = $query->paginate(10);
 
@@ -53,9 +57,10 @@ class ReportController extends Controller
             $user->applications = is_string($user->applications) 
                 ? json_decode($user->applications, true) 
                 : $user->applications;
+            
             return $user;
         });
 
-        return $this->paginatedResponse($users);
+        return $this->paginatedResponse(JsonResource::collection($users));
     }
 }
