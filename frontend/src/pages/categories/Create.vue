@@ -3,24 +3,24 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import Button from 'primevue/button';
 import { useToast } from 'primevue/usetoast';
-import DepartmentForm from '@/components/departments/DepartmentForm.vue';
+import CategoryForm from '@/components/categories/CategoryForm.vue';
 import api from '@/services/api';
 
 const router = useRouter();
 const toast = useToast();
 const loading = ref(false);
 
-const handleFormSubmit = async (payload: { name: string }) => {
+const handleFormSubmit = async (payload: Record<string, unknown>) => {
   loading.value = true;
   try {
-    await api.post('/departments', payload);
+    await api.post('/categories', payload);
     toast.add({
       severity: 'success',
       summary: 'Created',
-      detail: 'Department created successfully.',
+      detail: 'Category created successfully.',
       life: 3000,
     });
-    router.push({ name: 'departments.index' });
+    router.push({ name: 'categories.index' });
   } catch (err: any) {
     toast.add({
       severity: 'error',
@@ -41,19 +41,19 @@ const handleFormSubmit = async (payload: { name: string }) => {
         icon="pi pi-arrow-left"
         text
         rounded
-        @click="router.push({ name: 'departments.index' })"
+        @click="router.push({ name: 'categories.index' })"
       />
       <div>
-        <h1 class="text-2xl font-bold text-slate-800 tracking-tight">New Department</h1>
-        <p class="text-sm text-slate-400 mt-1">Create a new organizational department</p>
+        <h1 class="text-2xl font-bold text-slate-800 tracking-tight">New Category</h1>
+        <p class="text-sm text-slate-400 mt-1">Create a new application category</p>
       </div>
     </div>
 
     <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
-      <DepartmentForm
+      <CategoryForm
         :loading="loading"
         @submit="handleFormSubmit"
-        @cancel="router.push({ name: 'departments.index' })"
+        @cancel="router.push({ name: 'categories.index' })"
       />
     </div>
   </div>

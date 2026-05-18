@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Http\Resources\UserResource;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -21,7 +22,12 @@ class UserController extends Controller
             ->orderBy('name')
             ->get(['id', 'name', 'email', 'is_admin', 'department_id', 'role_id', 'created_at']);
 
-        return $this->successResponse($users);
+        return $this->successResponse(UserResource::collection($users));
+    }
+
+    public function show(User $user): JsonResponse
+    {
+        return $this->successResponse(new UserResource($user->load(['department:id,name', 'role:id,name'])));
     }
 
     public function store(StoreUserRequest $request): JsonResponse
@@ -32,7 +38,7 @@ class UserController extends Controller
         $user = User::create($data);
 
         return $this->successResponse(
-            $user->load(['department:id,name', 'role:id,name']),
+            new UserResource($user->load(['department:id,name', 'role:id,name'])),
             'User created successfully.',
             201
         );
@@ -51,7 +57,7 @@ class UserController extends Controller
         $user->update($data);
 
         return $this->successResponse(
-            $user->fresh()->load(['department:id,name', 'role:id,name']),
+            new UserResource($user->fresh()->load(['department:id,name', 'role:id,name'])),
             'User updated successfully.'
         );
     }

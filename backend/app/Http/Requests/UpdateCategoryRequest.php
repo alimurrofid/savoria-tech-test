@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreApplicationRequest extends FormRequest
+class UpdateCategoryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,12 +22,11 @@ class StoreApplicationRequest extends FormRequest
      */
     public function rules(): array
     {
+        $categoryId = $this->route('category')?->id;
+
         return [
-            'name'        => ['required', 'string', 'max:255', 'unique:applications,name'],
-            'url'         => ['required', 'url', 'max:2048'],
-            'icon'        => ['nullable', 'string', 'max:100'],
-            'category_id' => ['nullable', 'integer', 'exists:categories,id'],
-            'description' => ['nullable', 'string', 'max:1000'],
+            'name'        => ['sometimes', 'required', 'string', 'max:100', "unique:categories,name,{$categoryId}"],
+            'description' => ['nullable', 'string', 'max:500'],
         ];
     }
 
@@ -39,8 +38,7 @@ class StoreApplicationRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.unique' => 'An application with this name already exists.',
-            'url.url'     => 'The URL must be a valid URL (e.g. https://app.internal).',
+            'name.unique' => 'A category with this name already exists.',
         ];
     }
 }

@@ -3,9 +3,11 @@
 use App\Http\Controllers\Api\AccessRuleController;
 use App\Http\Controllers\Api\ApplicationController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
@@ -33,16 +35,20 @@ Route::middleware('auth:sanctum')->group(function () {
     // ─── Admin-only Routes ────────────────────────────────────────────────────
     Route::middleware('is_admin')->group(function () {
 
-        // Master Applications — full CRUD
+        // Master Applications & Categories — full CRUD
         Route::apiResource('applications', ApplicationController::class);
+        Route::apiResource('categories', CategoryController::class);
 
         // Access Rules
         Route::get('/access-rules/{type}/{id}', [AccessRuleController::class, 'show']);
         Route::put('/access-rules/{type}/{id}', [AccessRuleController::class, 'update']);
 
+        // Reports
+        Route::get('/reports/user-access', [ReportController::class, 'userAccess']);
+
         // Master Departments, Roles, Users — full CRUD
-        Route::apiResource('departments', DepartmentController::class)->except(['show']);
-        Route::apiResource('roles',       RoleController::class)->except(['show']);
-        Route::apiResource('users',       UserController::class)->except(['show']);
+        Route::apiResource('departments', DepartmentController::class);
+        Route::apiResource('roles',       RoleController::class);
+        Route::apiResource('users',       UserController::class);
     });
 });

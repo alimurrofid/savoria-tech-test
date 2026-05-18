@@ -16,9 +16,10 @@ return new class extends Migration
             $table->string('name');
             $table->string('url');
             $table->string('icon')->nullable();
-            $table->string('category')->nullable();
+            $table->foreignId('category_id')->nullable()->constrained('categories')->nullOnDelete();
             $table->text('description')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

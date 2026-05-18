@@ -40,6 +40,7 @@ onMounted(fetchRecords);
 
 const openCreate = () => router.push({ name: 'roles.create' });
 const openEdit = (row: Role) => router.push({ name: 'roles.edit', params: { id: row.id } });
+const openShow = (row: Role) => router.push({ name: 'roles.show', params: { id: row.id } });
 
 const handleDelete = (row: Role) => {
   confirm.require({
@@ -52,7 +53,12 @@ const handleDelete = (row: Role) => {
     accept: async () => {
       try {
         await api.delete(`/roles/${row.id}`);
-        toast.add({ severity: 'success', summary: 'Deleted', detail: `"${row.name}" deleted.`, life: 3000 });
+        toast.add({
+          severity: 'success',
+          summary: 'Deleted',
+          detail: `"${row.name}" deleted.`,
+          life: 3000,
+        });
         await fetchRecords();
       } catch {
         toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to delete.', life: 3000 });
@@ -74,40 +80,74 @@ const handleDelete = (row: Role) => {
     </div>
 
     <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-      <DataTable ref="dt" :value="records" dataKey="id" :loading="loading" :paginator="true" :rows="10"
-        v-model:filters="filters" :globalFilterFields="['name']"
+      <DataTable
+        ref="dt"
+        :value="records"
+        dataKey="id"
+        :loading="loading"
+        :paginator="true"
+        :rows="10"
+        v-model:filters="filters"
+        :globalFilterFields="['name']"
         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-        :rowsPerPageOptions="[5, 10, 25]" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-        stripedRows class="text-sm">
+        :rowsPerPageOptions="[5, 10, 25]"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        stripedRows
+        class="text-sm"
+      >
         <template #header>
           <div class="flex flex-wrap gap-2 items-center justify-between">
             <span class="text-sm text-slate-400 font-medium">{{ records.length }} total</span>
             <IconField iconPosition="left">
-                <InputIcon>
-                    <i class="pi pi-search" />
-                </InputIcon>
-                <InputText v-model="filters['global'].value" placeholder="Global search..." class="w-64" />
+              <InputIcon>
+                <i class="pi pi-search" />
+              </InputIcon>
+              <InputText v-model="filters['global'].value" placeholder="Search..." class="w-64" />
             </IconField>
           </div>
         </template>
         <Column field="name" header="Role Name" style="min-width: 200px">
           <template #body="{ data }">
             <div class="flex items-center gap-3">
-              <div class="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0">
+              <div
+                class="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0"
+              >
                 <i class="pi pi-id-card text-sm"></i>
               </div>
               <span class="font-semibold text-slate-800">{{ data.name }}</span>
             </div>
           </template>
         </Column>
-        <Column field="users_count" header="Users" style="width: 120px">
-          <template #body="{ data }"><span class="text-slate-600 font-medium">{{ data.users_count ?? 0 }}</span></template>
-        </Column>
-        <Column header="Actions" style="width: 110px">
+        <Column header="Actions" style="width: 140px">
           <template #body="{ data }">
             <div class="flex items-center justify-end gap-2">
-              <Button icon="pi pi-pencil" size="small" severity="secondary" text rounded v-tooltip.top="'Edit'" @click="openEdit(data)" />
-              <Button icon="pi pi-trash" size="small" severity="danger" text rounded v-tooltip.top="'Delete'" @click="handleDelete(data)" />
+              <Button
+                icon="pi pi-eye"
+                size="small"
+                severity="info"
+                text
+                rounded
+                v-tooltip.top="'Show'"
+                @click="openShow(data)"
+              />
+              <Button
+                icon="pi pi-pencil"
+                size="small"
+                severity="secondary"
+                text
+                rounded
+                v-tooltip.top="'Edit'"
+                @click="openEdit(data)"
+              />
+              <Button
+                icon="pi pi-trash"
+                size="small"
+                severity="danger"
+                text
+                rounded
+                v-tooltip.top="'Delete'"
+                @click="handleDelete(data)"
+              />
             </div>
           </template>
         </Column>
@@ -123,7 +163,22 @@ const handleDelete = (row: Role) => {
 </template>
 
 <style scoped>
-:deep(.p-datatable .p-datatable-thead > tr > th) { background: #f8fafc; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #94a3b8; }
-:deep(.p-datatable .p-datatable-tbody > tr > td) { border-bottom: 1px solid #f8fafc; padding-top: 0.9rem; padding-bottom: 0.9rem; }
-:deep(.p-paginator) { border-top: 1px solid #f1f5f9; padding: 0.75rem 1rem; background: white; }
+:deep(.p-datatable .p-datatable-thead > tr > th) {
+  background: #f8fafc;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #94a3b8;
+}
+:deep(.p-datatable .p-datatable-tbody > tr > td) {
+  border-bottom: 1px solid #f8fafc;
+  padding-top: 0.9rem;
+  padding-bottom: 0.9rem;
+}
+:deep(.p-paginator) {
+  border-top: 1px solid #f1f5f9;
+  padding: 0.75rem 1rem;
+  background: white;
+}
 </style>

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Application;
+use App\Models\Category;
 use App\Models\Department;
 use App\Models\Role;
 use App\Models\User;
@@ -69,13 +70,24 @@ class DatabaseSeeder extends Seeder
             'is_admin'      => false,
         ]);
 
+        // ─── Categories ───────────────────────────────────────────────────────
+        $catEnterprise   = Category::create(['name' => 'Enterprise', 'description' => 'Enterprise applications']);
+        $catHR           = Category::create(['name' => 'HR', 'description' => 'Human Resources applications']);
+        $catFinance      = Category::create(['name' => 'Finance', 'description' => 'Finance and Accounting applications']);
+        $catSupport      = Category::create(['name' => 'Support', 'description' => 'IT and Support applications']);
+        $catProductivity = Category::create(['name' => 'Productivity', 'description' => 'Productivity and Collaboration']);
+        $catLogistics    = Category::create(['name' => 'Logistics', 'description' => 'Supply chain and logistics']);
+        $catSales        = Category::create(['name' => 'Sales', 'description' => 'Sales and CRM']);
+        $catAnalytics    = Category::create(['name' => 'Analytics', 'description' => 'Data and Analytics']);
+        $catIT           = Category::create(['name' => 'IT', 'description' => 'IT Infrastructure']);
+
         // ─── Applications ─────────────────────────────────────────────────────
         $apps = Application::insert([
             [
                 'name'        => 'ERP System',
                 'url'         => 'https://erp.internal',
                 'icon'        => 'pi pi-server',
-                'category'    => 'Enterprise',
+                'category_id' => $catEnterprise->id,
                 'description' => 'Core enterprise resource planning system.',
                 'created_at'  => now(),
                 'updated_at'  => now(),
@@ -84,7 +96,7 @@ class DatabaseSeeder extends Seeder
                 'name'        => 'HRIS',
                 'url'         => 'https://hris.internal',
                 'icon'        => 'pi pi-users',
-                'category'    => 'HR',
+                'category_id' => $catHR->id,
                 'description' => 'Human Resource Information System.',
                 'created_at'  => now(),
                 'updated_at'  => now(),
@@ -93,7 +105,7 @@ class DatabaseSeeder extends Seeder
                 'name'        => 'Payroll',
                 'url'         => 'https://payroll.internal',
                 'icon'        => 'pi pi-wallet',
-                'category'    => 'Finance',
+                'category_id' => $catFinance->id,
                 'description' => 'Employee payroll processing and management.',
                 'created_at'  => now(),
                 'updated_at'  => now(),
@@ -102,7 +114,7 @@ class DatabaseSeeder extends Seeder
                 'name'        => 'Support Desk',
                 'url'         => 'https://support.internal',
                 'icon'        => 'pi pi-headphones',
-                'category'    => 'Support',
+                'category_id' => $catSupport->id,
                 'description' => 'Internal IT helpdesk and ticketing system.',
                 'created_at'  => now(),
                 'updated_at'  => now(),
@@ -111,7 +123,7 @@ class DatabaseSeeder extends Seeder
                 'name'        => 'Project Management',
                 'url'         => 'https://pm.internal',
                 'icon'        => 'pi pi-calendar',
-                'category'    => 'Productivity',
+                'category_id' => $catProductivity->id,
                 'description' => 'Track and manage projects across teams.',
                 'created_at'  => now(),
                 'updated_at'  => now(),
@@ -120,7 +132,7 @@ class DatabaseSeeder extends Seeder
                 'name'        => 'Document Management',
                 'url'         => 'https://dms.internal',
                 'icon'        => 'pi pi-file',
-                'category'    => 'Productivity',
+                'category_id' => $catProductivity->id,
                 'description' => 'Centralized document storage and version control.',
                 'created_at'  => now(),
                 'updated_at'  => now(),
@@ -129,7 +141,7 @@ class DatabaseSeeder extends Seeder
                 'name'        => 'Inventory Management',
                 'url'         => 'https://inventory.internal',
                 'icon'        => 'pi pi-box',
-                'category'    => 'Logistics',
+                'category_id' => $catLogistics->id,
                 'description' => 'Real-time inventory tracking and control.',
                 'created_at'  => now(),
                 'updated_at'  => now(),
@@ -138,7 +150,7 @@ class DatabaseSeeder extends Seeder
                 'name'        => 'CRM',
                 'url'         => 'https://crm.internal',
                 'icon'        => 'pi pi-briefcase',
-                'category'    => 'Sales',
+                'category_id' => $catSales->id,
                 'description' => 'Customer relationship management platform.',
                 'created_at'  => now(),
                 'updated_at'  => now(),
@@ -147,7 +159,7 @@ class DatabaseSeeder extends Seeder
                 'name'        => 'Business Intelligence',
                 'url'         => 'https://bi.internal',
                 'icon'        => 'pi pi-chart-bar',
-                'category'    => 'Analytics',
+                'category_id' => $catAnalytics->id,
                 'description' => 'Data analytics and reporting dashboard.',
                 'created_at'  => now(),
                 'updated_at'  => now(),
@@ -156,7 +168,7 @@ class DatabaseSeeder extends Seeder
                 'name'        => 'Asset Management',
                 'url'         => 'https://assets.internal',
                 'icon'        => 'pi pi-desktop',
-                'category'    => 'IT',
+                'category_id' => $catIT->id,
                 'description' => 'Company asset tracking and lifecycle management.',
                 'created_at'  => now(),
                 'updated_at'  => now(),

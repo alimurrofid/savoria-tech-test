@@ -46,6 +46,36 @@ const router = createRouter({
           meta: { requiresAdmin: true },
         },
         {
+          path: '/applications/:id',
+          name: 'applications.show',
+          component: () => import('@/pages/applications/Show.vue'),
+          meta: { requiresAdmin: true },
+        },
+        {
+          path: '/categories',
+          name: 'categories.index',
+          component: () => import('@/pages/categories/Index.vue'),
+          meta: { requiresAdmin: true },
+        },
+        {
+          path: '/categories/create',
+          name: 'categories.create',
+          component: () => import('@/pages/categories/Create.vue'),
+          meta: { requiresAdmin: true },
+        },
+        {
+          path: '/categories/:id/edit',
+          name: 'categories.edit',
+          component: () => import('@/pages/categories/Edit.vue'),
+          meta: { requiresAdmin: true },
+        },
+        {
+          path: '/categories/:id',
+          name: 'categories.show',
+          component: () => import('@/pages/categories/Show.vue'),
+          meta: { requiresAdmin: true },
+        },
+        {
           path: '/access-management',
           name: 'access-management.index',
           component: () => import('@/pages/access-management/Index.vue'),
@@ -70,6 +100,12 @@ const router = createRouter({
           meta: { requiresAdmin: true },
         },
         {
+          path: '/departments/:id',
+          name: 'departments.show',
+          component: () => import('@/pages/departments/Show.vue'),
+          meta: { requiresAdmin: true },
+        },
+        {
           path: '/roles',
           name: 'roles.index',
           component: () => import('@/pages/roles/Index.vue'),
@@ -88,6 +124,12 @@ const router = createRouter({
           meta: { requiresAdmin: true },
         },
         {
+          path: '/roles/:id',
+          name: 'roles.show',
+          component: () => import('@/pages/roles/Show.vue'),
+          meta: { requiresAdmin: true },
+        },
+        {
           path: '/users',
           name: 'users.index',
           component: () => import('@/pages/users/Index.vue'),
@@ -103,6 +145,18 @@ const router = createRouter({
           path: '/users/:id/edit',
           name: 'users.edit',
           component: () => import('@/pages/users/Edit.vue'),
+          meta: { requiresAdmin: true },
+        },
+        {
+          path: '/users/:id',
+          name: 'users.show',
+          component: () => import('@/pages/users/Show.vue'),
+          meta: { requiresAdmin: true },
+        },
+        {
+          path: '/reports/user-access',
+          name: 'reports.user-access',
+          component: () => import('@/pages/reports/UserAccess.vue'),
           meta: { requiresAdmin: true },
         },
       ],

@@ -111,14 +111,19 @@ const iconBg = (category: string | null): string => {
             <div class="p-2 space-y-4">
               <!-- Icon -->
               <div
-                :class="['w-12 h-12 rounded-xl flex items-center justify-center text-xl', iconBg(app.category)]"
+                :class="[
+                  'w-12 h-12 rounded-xl flex items-center justify-center text-xl',
+                  iconBg(app.category),
+                ]"
               >
                 <i :class="app.icon ?? 'pi pi-th-large'"></i>
               </div>
 
               <!-- Name -->
               <div>
-                <h3 class="text-sm font-bold text-slate-800 leading-tight group-hover:text-primary-600 transition-colors">
+                <h3
+                  class="text-sm font-bold text-slate-800 leading-tight group-hover:text-primary-600 transition-colors"
+                >
                   {{ app.name }}
                 </h3>
               </div>
@@ -126,11 +131,16 @@ const iconBg = (category: string | null): string => {
               <!-- Category badge + arrow -->
               <div class="flex items-center justify-between">
                 <span
-                  :class="['text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full', categoryColor(app.category)]"
+                  :class="[
+                    'text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full',
+                    categoryColor(app.category),
+                  ]"
                 >
                   {{ app.category ?? 'App' }}
                 </span>
-                <i class="pi pi-arrow-up-right text-slate-300 text-xs group-hover:text-primary-400 transition-colors"></i>
+                <i
+                  class="pi pi-arrow-up-right text-slate-300 text-xs group-hover:text-primary-400 transition-colors"
+                ></i>
               </div>
             </div>
           </template>

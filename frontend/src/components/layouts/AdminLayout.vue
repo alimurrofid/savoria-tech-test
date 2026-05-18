@@ -50,7 +50,7 @@ const userMenuItems = ref([
       >
         <div class="flex items-center gap-3 overflow-hidden">
           <div
-            class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-black text-xl shrink-0 shadow-lg shadow-blue-200"
+            class="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center text-white font-black text-xl shrink-0 shadow-lg shadow-red-200"
           >
             S
           </div>
@@ -70,14 +70,17 @@ const userMenuItems = ref([
           <span
             v-if="!isSidebarCollapsed"
             class="text-[10px] font-bold text-slate-400 tracking-[0.2em] mb-4 block px-4 uppercase"
-          >Main Menu</span>
+            >Main Menu</span
+          >
           <div v-else class="h-px bg-slate-100 w-10 mx-auto mb-6"></div>
 
           <nav class="space-y-1">
             <!-- Dashboard -->
             <router-link
               to="/dashboard"
-              v-tooltip.right="isSidebarCollapsed ? { value: 'Dashboard', class: 'custom-tooltip' } : null"
+              v-tooltip.right="
+                isSidebarCollapsed ? { value: 'Dashboard', class: 'custom-tooltip' } : null
+              "
               class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200"
               :class="[
                 $route.path === '/dashboard'
@@ -97,17 +100,20 @@ const userMenuItems = ref([
           <span
             v-if="!isSidebarCollapsed"
             class="text-[10px] font-bold text-slate-400 tracking-[0.2em] mb-4 block px-4 uppercase"
-          >Administration</span>
+            >Administration</span
+          >
           <div v-else class="h-px bg-slate-100 w-10 mx-auto mb-6"></div>
 
           <nav class="space-y-1">
             <!-- Applications -->
             <router-link
               to="/applications"
-              v-tooltip.right="isSidebarCollapsed ? { value: 'Applications', class: 'custom-tooltip' } : null"
+              v-tooltip.right="
+                isSidebarCollapsed ? { value: 'Applications', class: 'custom-tooltip' } : null
+              "
               class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200"
               :class="[
-                $route.path === '/applications'
+                $route.path.startsWith('/applications')
                   ? 'bg-primary-50 text-primary-600 font-semibold'
                   : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700',
                 isSidebarCollapsed ? 'justify-center' : '',
@@ -117,10 +123,30 @@ const userMenuItems = ref([
               <span v-if="!isSidebarCollapsed" class="whitespace-nowrap">Applications</span>
             </router-link>
 
+            <!-- Categories -->
+            <router-link
+              to="/categories"
+              v-tooltip.right="
+                isSidebarCollapsed ? { value: 'Categories', class: 'custom-tooltip' } : null
+              "
+              class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200"
+              :class="[
+                $route.path.startsWith('/categories')
+                  ? 'bg-primary-50 text-primary-600 font-semibold'
+                  : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700',
+                isSidebarCollapsed ? 'justify-center' : '',
+              ]"
+            >
+              <i class="pi pi-tags text-lg shrink-0"></i>
+              <span v-if="!isSidebarCollapsed" class="whitespace-nowrap">Categories</span>
+            </router-link>
+
             <!-- Access Management -->
             <router-link
               to="/access-management"
-              v-tooltip.right="isSidebarCollapsed ? { value: 'Access Management', class: 'custom-tooltip' } : null"
+              v-tooltip.right="
+                isSidebarCollapsed ? { value: 'Access Management', class: 'custom-tooltip' } : null
+              "
               class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200"
               :class="[
                 $route.path === '/access-management'
@@ -140,14 +166,17 @@ const userMenuItems = ref([
           <span
             v-if="!isSidebarCollapsed"
             class="text-[10px] font-bold text-slate-400 tracking-[0.2em] mb-4 block px-4 uppercase"
-          >Master Data</span>
+            >Master Data</span
+          >
           <div v-else class="h-px bg-slate-100 w-10 mx-auto mb-6"></div>
 
           <nav class="space-y-1">
             <!-- Departments -->
             <router-link
               to="/departments"
-              v-tooltip.right="isSidebarCollapsed ? { value: 'Departments', class: 'custom-tooltip' } : null"
+              v-tooltip.right="
+                isSidebarCollapsed ? { value: 'Departments', class: 'custom-tooltip' } : null
+              "
               class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200"
               :class="[
                 $route.path === '/departments'
@@ -163,7 +192,9 @@ const userMenuItems = ref([
             <!-- Roles -->
             <router-link
               to="/roles"
-              v-tooltip.right="isSidebarCollapsed ? { value: 'Roles', class: 'custom-tooltip' } : null"
+              v-tooltip.right="
+                isSidebarCollapsed ? { value: 'Roles', class: 'custom-tooltip' } : null
+              "
               class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200"
               :class="[
                 $route.path === '/roles'
@@ -179,10 +210,12 @@ const userMenuItems = ref([
             <!-- Users -->
             <router-link
               to="/users"
-              v-tooltip.right="isSidebarCollapsed ? { value: 'Users', class: 'custom-tooltip' } : null"
+              v-tooltip.right="
+                isSidebarCollapsed ? { value: 'Users', class: 'custom-tooltip' } : null
+              "
               class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200"
               :class="[
-                $route.path === '/users'
+                $route.path.startsWith('/users')
                   ? 'bg-primary-50 text-primary-600 font-semibold'
                   : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700',
                 isSidebarCollapsed ? 'justify-center' : '',
@@ -190,6 +223,36 @@ const userMenuItems = ref([
             >
               <i class="pi pi-users text-lg shrink-0"></i>
               <span v-if="!isSidebarCollapsed" class="whitespace-nowrap">Users</span>
+            </router-link>
+          </nav>
+        </div>
+
+        <!-- Reports Section (Admin only) -->
+        <div v-if="authStore.user?.is_admin">
+          <span
+            v-if="!isSidebarCollapsed"
+            class="text-[10px] font-bold text-slate-400 tracking-[0.2em] mb-4 block px-4 uppercase"
+            >Reports</span
+          >
+          <div v-else class="h-px bg-slate-100 w-10 mx-auto mb-6"></div>
+
+          <nav class="space-y-1">
+            <!-- User Access Report -->
+            <router-link
+              to="/reports/user-access"
+              v-tooltip.right="
+                isSidebarCollapsed ? { value: 'User Access Report', class: 'custom-tooltip' } : null
+              "
+              class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200"
+              :class="[
+                $route.path === '/reports/user-access'
+                  ? 'bg-primary-50 text-primary-600 font-semibold'
+                  : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700',
+                isSidebarCollapsed ? 'justify-center' : '',
+              ]"
+            >
+              <i class="pi pi-chart-bar text-lg shrink-0"></i>
+              <span v-if="!isSidebarCollapsed" class="whitespace-nowrap">User Access</span>
             </router-link>
           </nav>
         </div>
@@ -231,7 +294,7 @@ const userMenuItems = ref([
           <Avatar
             :label="authStore.user?.name?.charAt(0).toUpperCase()"
             shape="circle"
-            class="cursor-pointer border-2 border-white shadow-sm hover:ring-4 hover:ring-primary-50 transition-all select-none"
+            class="cursor-pointer border-2 border-white shadow-sm hover:ring-2 hover:ring-slate-300 transition-all select-none"
             @click="toggleUserMenu"
             aria-haspopup="true"
             aria-controls="user_menu"
@@ -269,7 +332,13 @@ const userMenuItems = ref([
   animation: fadeIn 0.3s ease-in-out;
 }
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateX(-10px); }
-  to   { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 </style>

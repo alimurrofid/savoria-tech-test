@@ -14,10 +14,20 @@ const handleFormSubmit = async (payload: { name: string }) => {
   loading.value = true;
   try {
     await api.post('/roles', payload);
-    toast.add({ severity: 'success', summary: 'Created', detail: 'Role created successfully.', life: 3000 });
+    toast.add({
+      severity: 'success',
+      summary: 'Created',
+      detail: 'Role created successfully.',
+      life: 3000,
+    });
     router.push({ name: 'roles.index' });
   } catch (err: any) {
-    toast.add({ severity: 'error', summary: 'Error', detail: err?.response?.data?.message ?? 'An error occurred.', life: 4000 });
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: err?.response?.data?.message ?? 'An error occurred.',
+      life: 4000,
+    });
   } finally {
     loading.value = false;
   }
@@ -35,7 +45,11 @@ const handleFormSubmit = async (payload: { name: string }) => {
     </div>
 
     <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
-      <RoleForm :loading="loading" @submit="handleFormSubmit" @cancel="router.push({ name: 'roles.index' })" />
+      <RoleForm
+        :loading="loading"
+        @submit="handleFormSubmit"
+        @cancel="router.push({ name: 'roles.index' })"
+      />
     </div>
   </div>
 </template>

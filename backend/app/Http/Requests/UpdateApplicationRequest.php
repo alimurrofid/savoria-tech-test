@@ -29,7 +29,7 @@ class UpdateApplicationRequest extends FormRequest
             'name'        => ['sometimes', 'required', 'string', 'max:255', "unique:applications,name,{$applicationId}"],
             'url'         => ['sometimes', 'required', 'url', 'max:2048'],
             'icon'        => ['nullable', 'string', 'max:100'],
-            'category'    => ['sometimes', 'required', 'string', 'max:100'],
+            'category_id' => ['sometimes', 'nullable', 'integer', 'exists:categories,id'],
             'description' => ['nullable', 'string', 'max:1000'],
         ];
     }

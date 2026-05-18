@@ -12,19 +12,13 @@ const router = useRouter();
 const toast = useToast();
 
 const loading = ref(false);
-const saving = ref(false);
 const role = ref<Role | null>(null);
 
 onMounted(async () => {
   loading.value = true;
   try {
-    const { data } = await api.get<ApiResponse<Role[]>>(`/roles`);
-    const found = data.data.find((d) => d.id === Number(route.params.id));
-    if (found) {
-      role.value = found;
-    } else {
-      throw new Error('Not found');
-    }
+    const { data } = await api.get<ApiResponse<Role>>(`/roles/${route.params.id}`);
+    role.value = data.data;
   } catch {
     toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load role.', life: 3000 });
     router.push({ name: 'roles.index' });
@@ -32,38 +26,15 @@ onMounted(async () => {
     loading.value = false;
   }
 });
-
-const handleFormSubmit = async (payload: { name: string }) => {
-  saving.value = true;
-  try {
-    await api.put(`/roles/${route.params.id}`, payload);
-    toast.add({
-      severity: 'success',
-      summary: 'Updated',
-      detail: 'Role updated successfully.',
-      life: 3000,
-    });
-    router.push({ name: 'roles.index' });
-  } catch (err: any) {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: err?.response?.data?.message ?? 'An error occurred.',
-      life: 4000,
-    });
-  } finally {
-    saving.value = false;
-  }
-};
 </script>
 
 <template>
-  <div class="max-w-3xl mx-auto space-y-6">
+  <div class="max-w-2xl mx-auto space-y-6">
     <div class="flex items-center gap-4">
       <Button icon="pi pi-arrow-left" text rounded @click="router.push({ name: 'roles.index' })" />
       <div>
-        <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Edit Role</h1>
-        <p class="text-sm text-slate-400 mt-1">Update role details</p>
+        <h1 class="text-2xl font-bold text-slate-800 tracking-tight">View Role</h1>
+        <p class="text-sm text-slate-400 mt-1">Role details (Read-only)</p>
       </div>
     </div>
 
@@ -74,8 +45,7 @@ const handleFormSubmit = async (payload: { name: string }) => {
       <RoleForm
         v-else
         :initial-data="role"
-        :loading="saving"
-        @submit="handleFormSubmit"
+        disabled
         @cancel="router.push({ name: 'roles.index' })"
       />
     </div>

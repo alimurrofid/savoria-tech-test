@@ -49,14 +49,26 @@ const handleSave = async () => {
 
     form.value.password = '';
     form.value.password_confirmation = '';
-    toast.add({ severity: 'success', summary: 'Saved', detail: 'Profile updated successfully.', life: 3000 });
+    toast.add({
+      severity: 'success',
+      summary: 'Saved',
+      detail: 'Profile updated successfully.',
+      life: 3000,
+    });
   } catch (err: any) {
     const backendErrors = err?.response?.data?.errors ?? {};
     Object.keys(backendErrors).forEach((key) => {
-      errors.value[key] = Array.isArray(backendErrors[key]) ? backendErrors[key][0] : backendErrors[key];
+      errors.value[key] = Array.isArray(backendErrors[key])
+        ? backendErrors[key][0]
+        : backendErrors[key];
     });
     if (!Object.keys(errors.value).length) {
-      toast.add({ severity: 'error', summary: 'Error', detail: err?.response?.data?.message ?? 'Failed to save.', life: 3000 });
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: err?.response?.data?.message ?? 'Failed to save.',
+        life: 3000,
+      });
     }
   } finally {
     saving.value = false;
@@ -75,12 +87,16 @@ const handleSave = async () => {
     <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-8 space-y-6">
       <!-- Avatar row -->
       <div class="flex items-center gap-4 pb-6 border-b border-slate-100">
-        <div class="w-16 h-16 rounded-2xl bg-primary-100 flex items-center justify-center text-primary-600 text-2xl font-bold">
+        <div
+          class="w-16 h-16 rounded-2xl bg-primary-100 flex items-center justify-center text-primary-600 text-2xl font-bold"
+        >
           {{ form.name?.charAt(0)?.toUpperCase() }}
         </div>
         <div>
           <p class="font-bold text-slate-800 text-lg">{{ form.name }}</p>
-          <p class="text-sm text-slate-400">{{ authStore.user?.is_admin ? 'Administrator' : 'Regular User' }}</p>
+          <p class="text-sm text-slate-400">
+            {{ authStore.user?.is_admin ? 'Administrator' : 'Regular User' }}
+          </p>
         </div>
       </div>
 
@@ -89,19 +105,31 @@ const handleSave = async () => {
         <!-- Name -->
         <div class="flex flex-col gap-1.5">
           <label class="text-sm font-semibold text-slate-700">Full Name</label>
-          <InputText v-model="form.name" placeholder="Your name" :class="['w-full', { 'p-invalid': errors.name }]" />
+          <InputText
+            v-model="form.name"
+            placeholder="Your name"
+            :class="['w-full', { 'p-invalid': errors.name }]"
+          />
           <small v-if="errors.name" class="text-red-500 text-xs">{{ errors.name }}</small>
         </div>
 
         <!-- Email -->
         <div class="flex flex-col gap-1.5">
           <label class="text-sm font-semibold text-slate-700">Email Address</label>
-          <InputText v-model="form.email" type="email" placeholder="your@email.com" :class="['w-full', { 'p-invalid': errors.email }]" />
+          <InputText
+            v-model="form.email"
+            type="email"
+            placeholder="your@email.com"
+            :class="['w-full', { 'p-invalid': errors.email }]"
+          />
           <small v-if="errors.email" class="text-red-500 text-xs">{{ errors.email }}</small>
         </div>
 
         <div class="border-t border-slate-100 pt-5">
-          <p class="text-sm font-semibold text-slate-700 mb-4">Change Password <span class="font-normal text-slate-400">(leave blank to keep current)</span></p>
+          <p class="text-sm font-semibold text-slate-700 mb-4">
+            Change Password
+            <span class="font-normal text-slate-400">(leave blank to keep current)</span>
+          </p>
 
           <!-- New Password -->
           <div class="flex flex-col gap-1.5 mb-4">

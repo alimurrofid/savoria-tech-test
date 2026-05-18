@@ -1,52 +1,49 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import Button from 'primevue/button';
 import { useToast } from 'primevue/usetoast';
-import UserForm from '@/components/users/UserForm.vue';
+import CategoryForm from '@/components/categories/CategoryForm.vue';
 import api from '@/services/api';
-import type { Department, Role, ApiResponse } from '@/types/api';
+import type { Category, ApiResponse } from '@/types/api';
 
+const route = useRoute();
 const router = useRouter();
 const toast = useToast();
-const loading = ref(false);
-const submitting = ref(false);
 
-const departments = ref<Department[]>([]);
-const roles = ref<Role[]>([]);
+const loading = ref(false);
+const saving = ref(false);
+const category = ref<Category | null>(null);
 
 onMounted(async () => {
   loading.value = true;
   try {
-    const [deptsRes, rolesRes] = await Promise.all([
-      api.get<ApiResponse<Department[]>>('/departments'),
-      api.get<ApiResponse<Role[]>>('/roles'),
-    ]);
-    departments.value = deptsRes.data.data;
-    roles.value = rolesRes.data.data;
+    const { data } = await api.get<ApiResponse<Category>>(`/categories/${route.params.id}`);
+    category.value = data.data;
   } catch {
     toast.add({
       severity: 'error',
       summary: 'Error',
-      detail: 'Failed to load form data.',
+      detail: 'Failed to load category.',
       life: 3000,
     });
+    router.push({ name: 'categories.index' });
   } finally {
     loading.value = false;
   }
 });
 
 const handleFormSubmit = async (payload: Record<string, unknown>) => {
-  submitting.value = true;
+  saving.value = true;
   try {
-    await api.post('/users', payload);
+    await api.put(`/categories/${route.params.id}`, payload);
     toast.add({
       severity: 'success',
-      summary: 'Created',
-      detail: 'User created successfully.',
+      summary: 'Updated',
+      detail: 'Category updated successfully.',
       life: 3000,
     });
-    router.push({ name: 'users.index' });
+    router.push({ name: 'categories.index' });
   } catch (err: any) {
     toast.add({
       severity: 'error',
@@ -55,7 +52,7 @@ const handleFormSubmit = async (payload: Record<string, unknown>) => {
       life: 4000,
     });
   } finally {
-    submitting.value = false;
+    saving.value = false;
   }
 };
 </script>
@@ -63,10 +60,15 @@ const handleFormSubmit = async (payload: Record<string, unknown>) => {
 <template>
   <div class="max-w-3xl mx-auto space-y-6">
     <div class="flex items-center gap-4">
-      <Button icon="pi pi-arrow-left" text rounded @click="router.push({ name: 'users.index' })" />
+      <Button
+        icon="pi pi-arrow-left"
+        text
+        rounded
+        @click="router.push({ name: 'categories.index' })"
+      />
       <div>
-        <h1 class="text-2xl font-bold text-slate-800 tracking-tight">New User</h1>
-        <p class="text-sm text-slate-400 mt-1">Create a new system user</p>
+        <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Edit Category</h1>
+        <p class="text-sm text-slate-400 mt-1">Update category details</p>
       </div>
     </div>
 
@@ -74,13 +76,12 @@ const handleFormSubmit = async (payload: Record<string, unknown>) => {
       <div v-if="loading" class="flex justify-center p-8">
         <i class="pi pi-spin pi-spinner text-2xl text-slate-400"></i>
       </div>
-      <UserForm
+      <CategoryForm
         v-else
-        :departments="departments"
-        :roles="roles"
-        :loading="submitting"
+        :initial-data="category"
+        :loading="saving"
         @submit="handleFormSubmit"
-        @cancel="router.push({ name: 'users.index' })"
+        @cancel="router.push({ name: 'categories.index' })"
       />
     </div>
   </div>

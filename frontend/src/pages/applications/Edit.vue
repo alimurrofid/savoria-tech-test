@@ -21,7 +21,12 @@ onMounted(async () => {
     const { data } = await api.get<ApiResponse<Application>>(`/applications/${route.params.id}`);
     application.value = data.data;
   } catch {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load application.', life: 3000 });
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to load application.',
+      life: 3000,
+    });
     router.push({ name: 'applications.index' });
   } finally {
     loading.value = false;
@@ -32,10 +37,20 @@ const handleFormSubmit = async (payload: Record<string, unknown>) => {
   saving.value = true;
   try {
     await api.put(`/applications/${route.params.id}`, payload);
-    toast.add({ severity: 'success', summary: 'Updated', detail: 'Application updated successfully.', life: 3000 });
+    toast.add({
+      severity: 'success',
+      summary: 'Updated',
+      detail: 'Application updated successfully.',
+      life: 3000,
+    });
     router.push({ name: 'applications.index' });
   } catch (err: any) {
-    toast.add({ severity: 'error', summary: 'Error', detail: err?.response?.data?.message ?? 'An error occurred.', life: 4000 });
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: err?.response?.data?.message ?? 'An error occurred.',
+      life: 4000,
+    });
   } finally {
     saving.value = false;
   }
@@ -45,7 +60,12 @@ const handleFormSubmit = async (payload: Record<string, unknown>) => {
 <template>
   <div class="max-w-3xl mx-auto space-y-6">
     <div class="flex items-center gap-4">
-      <Button icon="pi pi-arrow-left" text rounded @click="router.push({ name: 'applications.index' })" />
+      <Button
+        icon="pi pi-arrow-left"
+        text
+        rounded
+        @click="router.push({ name: 'applications.index' })"
+      />
       <div>
         <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Edit Application</h1>
         <p class="text-sm text-slate-400 mt-1">Update application details</p>
@@ -56,7 +76,13 @@ const handleFormSubmit = async (payload: Record<string, unknown>) => {
       <div v-if="loading" class="flex justify-center p-8">
         <i class="pi pi-spin pi-spinner text-2xl text-slate-400"></i>
       </div>
-      <ApplicationForm v-else :initial-data="application" :loading="saving" @submit="handleFormSubmit" @cancel="router.push({ name: 'applications.index' })" />
+      <ApplicationForm
+        v-else
+        :initial-data="application"
+        :loading="saving"
+        @submit="handleFormSubmit"
+        @cancel="router.push({ name: 'applications.index' })"
+      />
     </div>
   </div>
 </template>

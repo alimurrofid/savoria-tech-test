@@ -38,7 +38,12 @@ const fetchRecords = async () => {
     });
     records.value = (data as any).data ?? data;
   } catch {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load applications.', life: 3000 });
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to load applications.',
+      life: 3000,
+    });
   } finally {
     loading.value = false;
   }
@@ -48,7 +53,10 @@ onMounted(fetchRecords);
 
 // ─── Routing ──────────────────────────────────────────────────────────────────
 const openCreate = () => router.push({ name: 'applications.create' });
-const openEdit = (row: Application) => router.push({ name: 'applications.edit', params: { id: row.id } });
+const openEdit = (row: Application) =>
+  router.push({ name: 'applications.edit', params: { id: row.id } });
+const openShow = (row: Application) =>
+  router.push({ name: 'applications.show', params: { id: row.id } });
 
 const handleDelete = (row: Application) => {
   confirm.require({
@@ -61,7 +69,12 @@ const handleDelete = (row: Application) => {
     accept: async () => {
       try {
         await api.delete(`/applications/${row.id}`);
-        toast.add({ severity: 'success', summary: 'Deleted', detail: `"${row.name}" deleted.`, life: 3000 });
+        toast.add({
+          severity: 'success',
+          summary: 'Deleted',
+          detail: `"${row.name}" deleted.`,
+          life: 3000,
+        });
         await fetchRecords();
       } catch {
         toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to delete.', life: 3000 });
@@ -103,10 +116,10 @@ const handleDelete = (row: Application) => {
           <div class="flex flex-wrap gap-2 items-center justify-between">
             <span class="text-sm text-slate-400 font-medium">{{ records.length }} total</span>
             <IconField iconPosition="left">
-                <InputIcon>
-                    <i class="pi pi-search" />
-                </InputIcon>
-                <InputText v-model="filters['global'].value" placeholder="Global search..." class="w-64" />
+              <InputIcon>
+                <i class="pi pi-search" />
+              </InputIcon>
+              <InputText v-model="filters['global'].value" placeholder="Search..." class="w-64" />
             </IconField>
           </div>
         </template>
@@ -114,7 +127,9 @@ const handleDelete = (row: Application) => {
         <Column field="name" header="Application" style="min-width: 200px">
           <template #body="{ data }">
             <div class="flex items-center gap-3">
-              <div class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 shrink-0">
+              <div
+                class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 shrink-0"
+              >
                 <i :class="data.icon ?? 'pi pi-th-large'"></i>
               </div>
               <span class="font-semibold text-slate-800">{{ data.name }}</span>
@@ -124,13 +139,18 @@ const handleDelete = (row: Application) => {
 
         <Column field="category" header="Category" style="width: 150px">
           <template #body="{ data }">
-            <Tag :value="data.category ?? '—'" severity="secondary" />
+            <Tag :value="data.category?.name ?? '—'" severity="secondary" />
           </template>
         </Column>
 
         <Column field="url" header="URL" style="min-width: 180px">
           <template #body="{ data }">
-            <a :href="data.url" target="_blank" rel="noopener noreferrer" class="text-primary-600 hover:underline truncate max-w-xs block">
+            <a
+              :href="data.url"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary-600 hover:underline truncate max-w-xs block"
+            >
               {{ data.url }}
             </a>
           </template>
@@ -142,11 +162,36 @@ const handleDelete = (row: Application) => {
           </template>
         </Column>
 
-        <Column header="Actions" style="width: 110px">
+        <Column header="Actions" style="width: 140px">
           <template #body="{ data }">
             <div class="flex items-center justify-end gap-2">
-              <Button icon="pi pi-pencil" size="small" severity="secondary" text rounded v-tooltip.top="'Edit'" @click="openEdit(data)" />
-              <Button icon="pi pi-trash" size="small" severity="danger" text rounded v-tooltip.top="'Delete'" @click="handleDelete(data)" />
+              <Button
+                icon="pi pi-eye"
+                size="small"
+                severity="info"
+                text
+                rounded
+                v-tooltip.top="'Show'"
+                @click="openShow(data)"
+              />
+              <Button
+                icon="pi pi-pencil"
+                size="small"
+                severity="secondary"
+                text
+                rounded
+                v-tooltip.top="'Edit'"
+                @click="openEdit(data)"
+              />
+              <Button
+                icon="pi pi-trash"
+                size="small"
+                severity="danger"
+                text
+                rounded
+                v-tooltip.top="'Delete'"
+                @click="handleDelete(data)"
+              />
             </div>
           </template>
         </Column>

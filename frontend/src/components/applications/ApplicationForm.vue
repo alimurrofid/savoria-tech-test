@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import { reactive, watch } from 'vue';
+import { reactive, watch, ref, onMounted } from 'vue';
 import InputText from 'primevue/inputtext';
 import Textarea from 'primevue/textarea';
 import Button from 'primevue/button';
-import type { Application } from '@/types/api';
+import Select from 'primevue/select';
+import type { Application, Category, PaginatedApiResponse } from '@/types/api';
+import api from '@/services/api';
 
 // ─── Props & Emits ────────────────────────────────────────────────────────────
 const props = defineProps<{
   initialData?: Partial<Application> | null;
   loading?: boolean;
+  disabled?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -21,17 +24,53 @@ const form = reactive({
   name: '',
   url: '',
   icon: '',
-  category: '',
+  category_id: null as number | null,
   description: '',
 });
 
 const errors = reactive<Record<string, string>>({});
+const categories = ref<Category[]>([]);
+const loadingCategories = ref(false);
+
+const primeIcons = [
+  { name: 'Server', icon: 'pi pi-server' },
+  { name: 'Users', icon: 'pi pi-users' },
+  { name: 'Wallet', icon: 'pi pi-wallet' },
+  { name: 'Headphones', icon: 'pi pi-headphones' },
+  { name: 'Calendar', icon: 'pi pi-calendar' },
+  { name: 'File', icon: 'pi pi-file' },
+  { name: 'Box', icon: 'pi pi-box' },
+  { name: 'Briefcase', icon: 'pi pi-briefcase' },
+  { name: 'Chart Bar', icon: 'pi pi-chart-bar' },
+  { name: 'Desktop', icon: 'pi pi-desktop' },
+  { name: 'Cog', icon: 'pi pi-cog' },
+  { name: 'Home', icon: 'pi pi-home' },
+  { name: 'Globe', icon: 'pi pi-globe' },
+  { name: 'Building', icon: 'pi pi-building' },
+];
+
+const fetchCategories = async () => {
+  loadingCategories.value = true;
+  try {
+    const { data } = await api.get<PaginatedApiResponse<Category>>('/categories', {
+      params: { search: '' },
+    }); // get all without pagination limits or handle it properly later
+    // @ts-ignore
+    categories.value = data.data.data ?? data.data;
+  } catch (e) {
+    console.error('Failed to load categories', e);
+  } finally {
+    loadingCategories.value = false;
+  }
+};
+
+onMounted(fetchCategories);
 
 // ─── Validation (PINDAH KE SINI) ──────────────────────────────────────────────
 const clearErrors = () => {
   errors.name = '';
   errors.url = '';
-  errors.category = '';
+  errors.category_id = '';
 };
 
 const validate = (): boolean => {
@@ -53,8 +92,8 @@ const validate = (): boolean => {
       valid = false;
     }
   }
-  if (!form.category.trim()) {
-    errors.category = 'Category is required.';
+  if (!form.category_id) {
+    errors.category_id = 'Category is required.';
     valid = false;
   }
 
@@ -68,7 +107,7 @@ watch(
     form.name = data?.name ?? '';
     form.url = data?.url ?? '';
     form.icon = data?.icon ?? '';
-    form.category = data?.category ?? '';
+    form.category_id = data?.category_id ?? null;
     form.description = data?.description ?? '';
     clearErrors(); // Sekarang aman dipanggil karena fungsinya sudah dibuat di atas
   },
@@ -82,9 +121,9 @@ const handleSubmit = () => {
     name: form.name.trim(),
     url: form.url.trim(),
     icon: form.icon.trim() || null,
-    category: form.category.trim(),
+    category_id: form.category_id,
     description: form.description.trim() || null,
-  });
+  } as any);
 };
 </script>
 
@@ -92,12 +131,13 @@ const handleSubmit = () => {
   <form @submit.prevent="handleSubmit" class="space-y-5" novalidate>
     <div class="flex flex-col gap-1.5">
       <label class="text-sm font-semibold text-slate-700">
-        Name <span class="text-red-500">*</span>
+        Application Name <span class="text-red-500">*</span>
       </label>
       <InputText
         v-model="form.name"
         placeholder="e.g. ERP System"
         :class="['w-full', { 'p-invalid': errors.name }]"
+        :disabled="disabled"
       />
       <small v-if="errors.name" class="text-red-500 text-xs">{{ errors.name }}</small>
     </div>
@@ -108,40 +148,55 @@ const handleSubmit = () => {
       </label>
       <InputText
         v-model="form.url"
-        placeholder="https://app.internal"
+        placeholder="https://erp.internal"
         :class="['w-full', { 'p-invalid': errors.url }]"
+        :disabled="disabled"
       />
       <small v-if="errors.url" class="text-red-500 text-xs">{{ errors.url }}</small>
+    </div>
+
+    <div class="flex flex-col gap-1.5">
+      <label class="text-sm font-semibold text-slate-700">Icon</label>
+      <Select
+        v-model="form.icon"
+        :options="primeIcons"
+        optionLabel="name"
+        optionValue="icon"
+        placeholder="Select an Icon"
+        class="w-full"
+        :disabled="disabled"
+      >
+        <template #value="slotProps">
+          <div v-if="slotProps.value" class="flex items-center">
+            <i :class="slotProps.value" class="mr-2 text-primary-600"></i>
+            <div>{{ primeIcons.find((i) => i.icon === slotProps.value)?.name }}</div>
+          </div>
+          <span v-else>{{ slotProps.placeholder }}</span>
+        </template>
+        <template #option="slotProps">
+          <div class="flex items-center">
+            <i :class="slotProps.option.icon" class="mr-2 text-slate-600"></i>
+            <div>{{ slotProps.option.name }}</div>
+          </div>
+        </template>
+      </Select>
     </div>
 
     <div class="flex flex-col gap-1.5">
       <label class="text-sm font-semibold text-slate-700">
         Category <span class="text-red-500">*</span>
       </label>
-      <InputText
-        v-model="form.category"
-        placeholder="e.g. Enterprise, HR, Finance"
-        :class="['w-full', { 'p-invalid': errors.category }]"
+      <Select
+        v-model="form.category_id"
+        :options="categories"
+        optionLabel="name"
+        optionValue="id"
+        placeholder="Select a Category"
+        :loading="loadingCategories"
+        :class="['w-full', { 'p-invalid': errors.category_id }]"
+        :disabled="disabled"
       />
-      <small v-if="errors.category" class="text-red-500 text-xs">{{ errors.category }}</small>
-    </div>
-
-    <div class="flex flex-col gap-1.5">
-      <label class="text-sm font-semibold text-slate-700">Icon</label>
-      <div class="flex gap-3 items-center">
-        <InputText
-          v-model="form.icon"
-          placeholder="e.g. pi pi-server"
-          class="w-full"
-        />
-        <div
-          v-if="form.icon"
-          class="w-10 h-10 shrink-0 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600"
-        >
-          <i :class="form.icon"></i>
-        </div>
-      </div>
-      <small class="text-slate-400 text-xs">Use a PrimeIcons class (e.g. <code>pi pi-server</code>).</small>
+      <small v-if="errors.category_id" class="text-red-500 text-xs">{{ errors.category_id }}</small>
     </div>
 
     <div class="flex flex-col gap-1.5">
@@ -151,23 +206,28 @@ const handleSubmit = () => {
         placeholder="Brief description of the application..."
         rows="3"
         class="w-full resize-none"
+        :disabled="disabled"
       />
     </div>
 
     <div class="flex justify-end gap-3 pt-2">
       <Button
+        v-if="disabled"
         type="button"
-        label="Cancel"
+        label="Back"
         severity="secondary"
         text
         @click="emit('cancel')"
       />
-      <Button
-        type="submit"
-        :label="initialData?.id ? 'Save Changes' : 'Create Application'"
-        icon="pi pi-check"
-        :loading="loading"
-      />
+      <template v-else>
+        <Button type="button" label="Cancel" severity="secondary" text @click="emit('cancel')" />
+        <Button
+          type="submit"
+          :label="initialData?.id ? 'Save Changes' : 'Create Application'"
+          icon="pi pi-check"
+          :loading="loading"
+        />
+      </template>
     </div>
   </form>
 </template>

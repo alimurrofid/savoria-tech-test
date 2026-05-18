@@ -21,10 +21,10 @@ class ApplicationController extends Controller
     {
         $search = request()->query('search');
 
-        $applications = Application::query()
+        $applications = Application::with('category')
             ->when($search, fn ($q) => $q
                 ->where('name', 'ilike', "%{$search}%")
-                ->orWhere('category', 'ilike', "%{$search}%")
+                ->orWhereHas('category', fn ($q2) => $q2->where('name', 'ilike', "%{$search}%"))
             )
             ->latest()
             ->paginate(10);
@@ -51,7 +51,7 @@ class ApplicationController extends Controller
      */
     public function show(Application $application)
     {
-        return $this->successResponse(new ApplicationResource($application));
+        return $this->successResponse(new ApplicationResource($application->load('category')));
     }
 
     /**

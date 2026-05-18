@@ -4,11 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['name', 'url', 'icon', 'category', 'description'])]
+#[Fillable(['name', 'url', 'icon', 'category_id', 'description'])]
 class Application extends Model
 {
+    use SoftDeletes;
     /**
      * Departments that have access to this application.
      */
@@ -31,5 +34,13 @@ class Application extends Model
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'application_user');
+    }
+
+    /**
+     * The category this application belongs to.
+     */
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
     }
 }

@@ -12,21 +12,13 @@ const router = useRouter();
 const toast = useToast();
 
 const loading = ref(false);
-const saving = ref(false);
 const department = ref<Department | null>(null);
 
 onMounted(async () => {
   loading.value = true;
   try {
-    // Note: DepartmentController doesn't have a show method by default, we need to handle this.
-    // However, the backend route was created with except(['show']). Let's fetch the list and find it.
-    const { data } = await api.get<ApiResponse<Department[]>>(`/departments`);
-    const found = data.data.find((d) => d.id === Number(route.params.id));
-    if (found) {
-      department.value = found;
-    } else {
-      throw new Error('Not found');
-    }
+    const { data } = await api.get<ApiResponse<Department>>(`/departments/${route.params.id}`);
+    department.value = data.data;
   } catch {
     toast.add({
       severity: 'error',
@@ -39,33 +31,10 @@ onMounted(async () => {
     loading.value = false;
   }
 });
-
-const handleFormSubmit = async (payload: { name: string }) => {
-  saving.value = true;
-  try {
-    await api.put(`/departments/${route.params.id}`, payload);
-    toast.add({
-      severity: 'success',
-      summary: 'Updated',
-      detail: 'Department updated successfully.',
-      life: 3000,
-    });
-    router.push({ name: 'departments.index' });
-  } catch (err: any) {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: err?.response?.data?.message ?? 'An error occurred.',
-      life: 4000,
-    });
-  } finally {
-    saving.value = false;
-  }
-};
 </script>
 
 <template>
-  <div class="max-w-3xl mx-auto space-y-6">
+  <div class="max-w-2xl mx-auto space-y-6">
     <div class="flex items-center gap-4">
       <Button
         icon="pi pi-arrow-left"
@@ -74,8 +43,8 @@ const handleFormSubmit = async (payload: { name: string }) => {
         @click="router.push({ name: 'departments.index' })"
       />
       <div>
-        <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Edit Department</h1>
-        <p class="text-sm text-slate-400 mt-1">Update department details</p>
+        <h1 class="text-2xl font-bold text-slate-800 tracking-tight">View Department</h1>
+        <p class="text-sm text-slate-400 mt-1">Department details (Read-only)</p>
       </div>
     </div>
 
@@ -86,8 +55,7 @@ const handleFormSubmit = async (payload: { name: string }) => {
       <DepartmentForm
         v-else
         :initial-data="department"
-        :loading="saving"
-        @submit="handleFormSubmit"
+        disabled
         @cancel="router.push({ name: 'departments.index' })"
       />
     </div>

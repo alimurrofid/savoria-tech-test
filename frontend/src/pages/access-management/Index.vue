@@ -38,7 +38,7 @@ const saving = ref(false);
 
 // 1. LOGIKA FILTER: Filter daftar user berdasarkan Department & Role yang dipilih
 const filteredUsers = computed(() => {
-  return masterUsers.value.filter(user => {
+  return masterUsers.value.filter((user) => {
     const matchDept = !selectedDepartment.value || user.department_id === selectedDepartment.value;
     const matchRole = !selectedRole.value || user.role_id === selectedRole.value;
     return matchDept && matchRole;
@@ -50,7 +50,7 @@ const activeEntityType = computed<EntityType | null>(() => {
   if (selectedUser.value) return 'user';
   if (selectedRole.value && !selectedDepartment.value) return 'role';
   if (selectedDepartment.value && !selectedRole.value) return 'department';
-  // Jika memilih Dept dan Role bersamaan tanpa memilih User, kamu bisa menentukan kebijakan default, 
+  // Jika memilih Dept dan Role bersamaan tanpa memilih User, kamu bisa menentukan kebijakan default,
   // misal dalam kasus ini jika ingin melihat spesifik user di kombinasi itu, user harus dipilih.
   return null;
 });
@@ -84,7 +84,7 @@ onMounted(async () => {
 // 3. LOGIKA TIMBAL BALIK: Jika User dipilih, otomatis set info Department dan Role milik user tersebut
 watch(selectedUser, (userId) => {
   if (userId) {
-    const user = masterUsers.value.find(u => u.id === userId);
+    const user = masterUsers.value.find((u) => u.id === userId);
     if (user) {
       selectedDepartment.value = user.department_id;
       selectedRole.value = user.role_id;
@@ -98,13 +98,20 @@ watch(activeEntityId, async (id) => {
     assigned.value = [];
     return;
   }
-  
+
   loadingAccess.value = true;
   try {
-    const { data } = await api.get<ApiResponse<AccessRulePayload>>(`/access-rules/${activeEntityType.value}/${id}`);
+    const { data } = await api.get<ApiResponse<AccessRulePayload>>(
+      `/access-rules/${activeEntityType.value}/${id}`,
+    );
     assigned.value = data.data.assigned_applications;
   } catch {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load access rules.', life: 3000 });
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to load access rules.',
+      life: 3000,
+    });
   } finally {
     loadingAccess.value = false;
   }
@@ -115,13 +122,27 @@ const saveAccess = async (applicationIds: number[]) => {
 
   saving.value = true;
   try {
-    await api.put(`/access-rules/${activeEntityType.value}/${activeEntityId.value}`, { application_ids: applicationIds });
-    toast.add({ severity: 'success', summary: 'Saved', detail: 'Access rights updated successfully.', life: 3000 });
-    
-    const { data } = await api.get<ApiResponse<AccessRulePayload>>(`/access-rules/${activeEntityType.value}/${activeEntityId.value}`);
+    await api.put(`/access-rules/${activeEntityType.value}/${activeEntityId.value}`, {
+      application_ids: applicationIds,
+    });
+    toast.add({
+      severity: 'success',
+      summary: 'Saved',
+      detail: 'Access rights updated successfully.',
+      life: 3000,
+    });
+
+    const { data } = await api.get<ApiResponse<AccessRulePayload>>(
+      `/access-rules/${activeEntityType.value}/${activeEntityId.value}`,
+    );
     assigned.value = data.data.assigned_applications;
   } catch {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to save access rights.', life: 3000 });
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to save access rights.',
+      life: 3000,
+    });
   } finally {
     saving.value = false;
   }
@@ -140,14 +161,21 @@ const resetFilters = () => {
     <div class="flex justify-between items-center">
       <div>
         <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Access Management</h1>
-        <p class="text-sm text-slate-400 mt-1">Assign and revoke application access with smart filtering</p>
+        <p class="text-sm text-slate-400 mt-1">
+          Assign and revoke application access with smart filtering
+        </p>
       </div>
-      <Button label="Clear Selection" icon="pi pi-refresh" severity="secondary" text @click="resetFilters" />
+      <Button
+        label="Clear Selection"
+        icon="pi pi-refresh"
+        severity="secondary"
+        text
+        @click="resetFilters"
+      />
     </div>
 
     <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-6">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        
         <div class="flex flex-col gap-1.5">
           <label class="text-sm font-semibold text-slate-700 flex items-center gap-2">
             <i class="pi pi-building text-slate-400"></i> Department
@@ -158,7 +186,7 @@ const resetFilters = () => {
             optionLabel="name"
             optionValue="id"
             placeholder="Filter by Department..."
-            :disabled="!!selectedUser" 
+            :disabled="!!selectedUser"
             class="w-full"
             filter
             showClear
@@ -197,7 +225,6 @@ const resetFilters = () => {
             showClear
           />
         </div>
-
       </div>
 
       <div class="border-t border-slate-100 pt-6">
@@ -208,18 +235,18 @@ const resetFilters = () => {
 
         <div v-else-if="selectedDepartment && selectedRole && !selectedUser">
           <Message severity="warn" :closable="false">
-            You have selected both a Department and a Role. Please select a <strong>Specific User</strong> within this cross-section to adjust individual access, or clear one field to manage at the group level.
+            You have selected both a Department and a Role. Please select a
+            <strong>Specific User</strong> within this cross-section to adjust individual access, or
+            clear one field to manage at the group level.
           </Message>
         </div>
 
         <Message v-else-if="!activeEntityId" severity="secondary" :closable="false">
-          Select a single Department, a single Role, or a Specific User above to manage application access.
+          Select a single Department, a single Role, or a Specific User above to manage application
+          access.
         </Message>
 
         <div v-else class="space-y-2">
-          <div class="text-xs font-semibold px-3 py-1 bg-blue-50 text-blue-700 rounded-md inline-block mb-2">
-            Targeting Access Matrix for: <span class="uppercase font-bold">{{ activeEntityType }} (ID: {{ activeEntityId }})</span>
-          </div>
           <AccessPickList
             :all="allApplications"
             :assigned="assigned"

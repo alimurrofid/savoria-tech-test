@@ -12,7 +12,7 @@ return new class extends Migration
     {
         DB::statement("
             CREATE OR REPLACE VIEW view_user_application_access AS
-            SELECT DISTINCT access_list.user_id, a.id AS application_id, a.name, a.url, a.icon, a.category
+            SELECT DISTINCT access_list.user_id, a.id AS application_id, a.name, a.url, a.icon, a.category_id, c.name AS category
             FROM (
                 SELECT u.id AS user_id, ad.application_id FROM users u JOIN application_department ad ON u.department_id = ad.department_id
                 UNION
@@ -21,6 +21,7 @@ return new class extends Migration
                 SELECT au.user_id, au.application_id FROM application_user au
             ) AS access_list
             JOIN applications a ON access_list.application_id = a.id
+            LEFT JOIN categories c ON a.category_id = c.id
         ");
     }
 

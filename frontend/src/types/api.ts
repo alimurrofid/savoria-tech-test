@@ -53,12 +53,21 @@ export interface Role {
   name: string;
 }
 
+export interface Category {
+  id: number;
+  name: string;
+  description: string | null;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export interface Application {
   id: number;
   name: string;
   url: string;
   icon: string | null;
-  category: string | null;
+  category_id: number | null;
+  category: Category | null;
   description: string | null;
   created_at?: string;
   updated_at?: string;
@@ -74,6 +83,17 @@ export interface UserAppAccess {
   url: string;
   icon: string | null;
   category: string | null;
+}
+
+/**
+ * Row shape returned by the Report API
+ * GET /api/reports/user-access
+ */
+export interface UserAccessReport {
+  id: number;
+  name: string;
+  email: string;
+  applications: UserAppAccess[];
 }
 
 // ─── Access Rule payload ──────────────────────────────────────────────────────
