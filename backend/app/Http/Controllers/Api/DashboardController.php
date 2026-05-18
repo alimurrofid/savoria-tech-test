@@ -3,23 +3,26 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-
 use App\Traits\ApiResponse;
-use App\Models\User;
-use App\Models\Product;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
     use ApiResponse;
 
+    /**
+     * Return all applications accessible by the authenticated user,
+     * sourced from the view_user_application_access PostgreSQL view.
+     */
     public function index()
     {
-        return $this->successResponse([
-            'total_users' => User::count(),
-            'total_products' => Product::count(),
-            'active_projects' => 42,
-            'revenue' => 12000,
-        ]);
+        $userId = Auth::id();
+
+        $applications = DB::table('view_user_application_access')
+            ->where('user_id', $userId)
+            ->get(['application_id', 'name', 'url', 'icon', 'category']);
+
+        return $this->successResponse($applications);
     }
 }

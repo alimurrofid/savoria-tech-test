@@ -1,216 +1,147 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
+import { ref, onMounted } from 'vue';
+import Card from 'primevue/card';
+import Skeleton from 'primevue/skeleton';
+import api from '@/services/api';
+import type { ApiResponse, UserAppAccess } from '@/types/api';
 
-const activities = ref([
-  { id: 1, action: 'User login', user: 'Admin', date: '10:00 AM', status: 'Success' },
-  { id: 2, action: 'Project created', user: 'John Doe', date: '09:30 AM', status: 'Active' },
-  { id: 3, action: 'Task completed', user: 'Jane Smith', date: '08:45 AM', status: 'Complete' },
-  { id: 4, action: 'Settings updated', user: 'System', date: '07:15 AM', status: 'Success' },
-]);
+// ─── State ────────────────────────────────────────────────────────────────────
+const apps = ref<UserAppAccess[]>([]);
+const loading = ref(true);
 
-const getSeverity = (status: string) => {
-  switch (status) {
-    case 'Success':
-      return 'bg-green-100 text-green-700';
-    case 'Active':
-      return 'bg-cyan-100 text-cyan-700';
-    case 'Complete':
-      return 'bg-purple-100 text-purple-700';
-    default:
-      return 'bg-slate-100 text-slate-700';
+// ─── Fetch ────────────────────────────────────────────────────────────────────
+onMounted(async () => {
+  try {
+    const { data } = await api.get<ApiResponse<UserAppAccess[]>>('/dashboard');
+    apps.value = data.data;
+  } finally {
+    loading.value = false;
   }
+});
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+const categoryColor = (category: string | null): string => {
+  const map: Record<string, string> = {
+    Enterprise: 'bg-violet-100 text-violet-700',
+    HR: 'bg-teal-100 text-teal-700',
+    Finance: 'bg-emerald-100 text-emerald-700',
+    Support: 'bg-orange-100 text-orange-700',
+    Productivity: 'bg-blue-100 text-blue-700',
+    Logistics: 'bg-amber-100 text-amber-700',
+    Sales: 'bg-pink-100 text-pink-700',
+    Analytics: 'bg-indigo-100 text-indigo-700',
+    IT: 'bg-cyan-100 text-cyan-700',
+  };
+  return map[category ?? ''] ?? 'bg-slate-100 text-slate-600';
+};
+
+const iconBg = (category: string | null): string => {
+  const map: Record<string, string> = {
+    Enterprise: 'bg-violet-50 text-violet-600',
+    HR: 'bg-teal-50 text-teal-600',
+    Finance: 'bg-emerald-50 text-emerald-600',
+    Support: 'bg-orange-50 text-orange-600',
+    Productivity: 'bg-blue-50 text-blue-600',
+    Logistics: 'bg-amber-50 text-amber-600',
+    Sales: 'bg-pink-50 text-pink-600',
+    Analytics: 'bg-indigo-50 text-indigo-600',
+    IT: 'bg-cyan-50 text-cyan-600',
+  };
+  return map[category ?? ''] ?? 'bg-slate-50 text-slate-500';
 };
 </script>
 
 <template>
   <div class="max-w-7xl mx-auto space-y-6">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div
-        class="bg-white rounded-2xl p-6 shadow-[0_2px_10px_0_rgba(0,0,0,0.02)] border border-slate-100 flex items-center justify-between"
-      >
-        <div class="space-y-3">
-          <div class="flex items-center gap-3">
-            <div
-              class="w-10 h-10 rounded-full bg-teal-50 flex items-center justify-center text-teal-600"
-            >
-              <i class="pi pi-users text-lg"></i>
-            </div>
-            <span class="text-sm font-semibold text-slate-500 tracking-wide">Total Users</span>
-          </div>
-          <div class="flex items-baseline gap-2">
-            <span class="text-3xl font-bold text-slate-800">1,234</span>
-            <span class="text-sm text-slate-400 font-medium">users</span>
-          </div>
-          <p class="text-xs text-slate-500 font-medium">
-            <span class="text-teal-500">+5.2%</span> this week
-          </p>
-        </div>
-        <div class="w-24 h-12">
-          <svg
-            viewBox="0 0 100 30"
-            class="stroke-teal-400 fill-none"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M0,25 L20,15 L40,20 L60,5 L80,10 L100,0" />
-          </svg>
-        </div>
+    <!-- Page Header -->
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-800 tracking-tight">My Applications</h1>
+        <p class="text-sm text-slate-400 mt-1">All applications you have access to</p>
       </div>
-
-      <div
-        class="bg-white rounded-2xl p-6 shadow-[0_2px_10px_0_rgba(0,0,0,0.02)] border border-slate-100 flex items-center justify-between"
+      <span
+        v-if="!loading"
+        class="text-xs font-semibold bg-primary-50 text-primary-600 rounded-full px-3 py-1.5"
       >
-        <div class="space-y-3">
-          <div class="flex items-center gap-3">
-            <div
-              class="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600"
-            >
-              <i class="pi pi-folder text-lg"></i>
-            </div>
-            <span class="text-sm font-semibold text-slate-500 tracking-wide">Active Projects</span>
-          </div>
-          <div class="flex items-baseline gap-2">
-            <span class="text-3xl font-bold text-slate-800">42</span>
-            <span class="text-sm text-slate-400 font-medium">projects</span>
-          </div>
-          <p class="text-xs text-slate-500 font-medium">
-            <span class="text-teal-500">+1%</span> since yesterday
-          </p>
-        </div>
-        <div class="w-24 h-12">
-          <svg
-            viewBox="0 0 100 30"
-            class="stroke-indigo-400 fill-none"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M0,20 L30,20 L60,10 L80,15 L100,5" />
-          </svg>
-        </div>
-      </div>
+        {{ apps.length }} app{{ apps.length !== 1 ? 's' : '' }}
+      </span>
+    </div>
 
+    <!-- Loading Skeleton -->
+    <div v-if="loading" class="grid grid-cols-2 md:grid-cols-4 gap-6">
       <div
-        class="bg-white rounded-2xl p-6 shadow-[0_2px_10px_0_rgba(0,0,0,0.02)] border border-slate-100 flex items-center justify-between"
+        v-for="n in 8"
+        :key="n"
+        class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-4"
       >
-        <div class="space-y-3">
-          <div class="flex items-center gap-3">
-            <div
-              class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600"
-            >
-              <i class="pi pi-dollar text-lg"></i>
-            </div>
-            <span class="text-sm font-semibold text-slate-500 tracking-wide">Revenue</span>
-          </div>
-          <div class="flex items-baseline gap-2">
-            <span class="text-3xl font-bold text-slate-800">$12,345</span>
-          </div>
-          <p class="text-xs text-slate-500 font-medium">
-            <span class="text-red-500">-2.1%</span> this week
-          </p>
-        </div>
-        <div class="w-24 h-12">
-          <svg
-            viewBox="0 0 100 30"
-            class="stroke-slate-400 fill-none"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M0,5 L20,10 L40,5 L60,25 L80,15 L100,20" />
-          </svg>
-        </div>
+        <Skeleton width="3rem" height="3rem" borderRadius="12px" />
+        <Skeleton width="70%" height="1rem" />
+        <Skeleton width="40%" height="0.75rem" />
       </div>
     </div>
 
+    <!-- Empty State -->
     <div
-      class="bg-white rounded-2xl p-6 shadow-[0_2px_10px_0_rgba(0,0,0,0.02)] border border-slate-100"
+      v-else-if="apps.length === 0"
+      class="flex flex-col items-center justify-center py-24 text-center bg-white rounded-2xl border border-slate-100"
     >
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="text-base font-bold text-slate-800">Performance trends</h2>
-        <span
-          class="text-xs font-semibold text-slate-500 border border-slate-200 rounded-lg px-3 py-1.5 cursor-pointer hover:bg-slate-50 transition-colors"
-        >
-          30 days <i class="pi pi-angle-down ml-1 text-[10px]"></i>
-        </span>
+      <div class="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mb-4">
+        <i class="pi pi-inbox text-2xl text-slate-400"></i>
       </div>
-      <div class="w-full h-40 relative flex items-end">
-        <svg viewBox="0 0 1000 100" class="w-full h-full drop-shadow-md" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="grad" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" style="stop-color: rgba(14, 165, 233, 0.2); stop-opacity: 1" />
-              <stop offset="100%" style="stop-color: rgba(14, 165, 233, 0); stop-opacity: 1" />
-            </linearGradient>
-          </defs>
-          <path
-            d="M0,100 C150,60 250,80 400,50 C550,20 650,50 800,10 C900,0 1000,30 1000,30 L1000,100 L0,100 Z"
-            fill="url(#grad)"
-            stroke="#0ea5e9"
-            stroke-width="2"
-          />
-        </svg>
-      </div>
+      <h3 class="text-base font-bold text-slate-700">No applications assigned</h3>
+      <p class="text-sm text-slate-400 mt-1">
+        Contact your administrator to get access to applications.
+      </p>
     </div>
 
-    <div
-      class="bg-white rounded-2xl p-2 shadow-[0_2px_10px_0_rgba(0,0,0,0.02)] border border-slate-100"
-    >
-      <div class="px-4 pt-4 pb-2">
-        <h2 class="text-base font-bold text-slate-800">Recent Activity</h2>
-      </div>
-
-      <DataTable :value="activities" class="p-datatable-sm w-full text-sm">
-        <Column
-          field="action"
-          header="ACTION"
-          headerClass="text-xs font-semibold text-slate-400 tracking-wider bg-white border-b border-slate-100 pb-3 uppercase"
-          bodyClass="py-4 text-slate-800 font-medium border-b border-slate-50 px-4"
-        ></Column>
-        <Column
-          field="user"
-          header="USER"
-          headerClass="text-xs font-semibold text-slate-400 tracking-wider bg-white border-b border-slate-100 pb-3 uppercase"
-          bodyClass="py-4 text-slate-600 border-b border-slate-50"
-        ></Column>
-        <Column
-          field="date"
-          header="DATE"
-          headerClass="text-xs font-semibold text-slate-400 tracking-wider bg-white border-b border-slate-100 pb-3 uppercase"
-          bodyClass="py-4 text-slate-500 border-b border-slate-50"
-        ></Column>
-        <Column
-          field="status"
-          header="STATUS"
-          headerClass="text-xs font-semibold text-slate-400 tracking-wider bg-white border-b border-slate-100 pb-3 uppercase"
-          bodyClass="py-4 border-b border-slate-50 px-4"
+    <!-- Application Grid -->
+    <div v-else class="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <a
+        v-for="app in apps"
+        :key="app.application_id"
+        :href="app.url"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 rounded-2xl"
+      >
+        <Card
+          class="h-full border border-slate-100 shadow-sm rounded-2xl transition-all duration-200 group-hover:shadow-md group-hover:-translate-y-0.5 group-hover:border-primary-100 overflow-hidden"
         >
-          <template #body="{ data }">
-            <span
-              :class="[
-                'px-2.5 py-1 rounded-md text-xs font-bold tracking-wide',
-                getSeverity(data.status),
-              ]"
-            >
-              {{ data.status }}
-            </span>
+          <template #content>
+            <div class="p-2 space-y-4">
+              <!-- Icon -->
+              <div
+                :class="['w-12 h-12 rounded-xl flex items-center justify-center text-xl', iconBg(app.category)]"
+              >
+                <i :class="app.icon ?? 'pi pi-th-large'"></i>
+              </div>
+
+              <!-- Name -->
+              <div>
+                <h3 class="text-sm font-bold text-slate-800 leading-tight group-hover:text-primary-600 transition-colors">
+                  {{ app.name }}
+                </h3>
+              </div>
+
+              <!-- Category badge + arrow -->
+              <div class="flex items-center justify-between">
+                <span
+                  :class="['text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full', categoryColor(app.category)]"
+                >
+                  {{ app.category ?? 'App' }}
+                </span>
+                <i class="pi pi-arrow-up-right text-slate-300 text-xs group-hover:text-primary-400 transition-colors"></i>
+              </div>
+            </div>
           </template>
-        </Column>
-      </DataTable>
+        </Card>
+      </a>
     </div>
   </div>
 </template>
 
 <style scoped>
-:deep(.p-datatable .p-datatable-thead > tr > th) {
-  border-bottom-width: 1px;
-  border-color: #f1f5f9;
-  background: white;
-}
-:deep(.p-datatable .p-datatable-tbody > tr > td) {
-  border-bottom-width: 1px;
-  border-color: #f8fafc;
+:deep(.p-card-body) {
+  padding: 0;
 }
 </style>

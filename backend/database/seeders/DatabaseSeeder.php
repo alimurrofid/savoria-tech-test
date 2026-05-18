@@ -2,8 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\Application;
+use App\Models\Department;
+use App\Models\Role;
 use App\Models\User;
-use App\Models\Product;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -17,18 +19,165 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create([
-            'name' => 'Super Admin',
-            'email' => 'admin@gmail.com',
-            'password' => Hash::make('admin'),
+        // ─── Departments ──────────────────────────────────────────────────────
+        $hr      = Department::create(['name' => 'HR']);
+        $it      = Department::create(['name' => 'IT']);
+        $finance = Department::create(['name' => 'Finance']);
+
+        // ─── Roles ────────────────────────────────────────────────────────────
+        $manager    = Role::create(['name' => 'Manager']);
+        $staff      = Role::create(['name' => 'Staff']);
+        $supervisor = Role::create(['name' => 'Supervisor']);
+
+        // ─── Users ────────────────────────────────────────────────────────────
+        // Admin user (no department / role — has full portal access)
+        $admin = User::create([
+            'name'     => 'Admin',
+            'email'    => 'admin@test.com',
+            'password' => Hash::make('password'),
+            'is_admin' => true,
         ]);
-        for ($i = 1; $i <= 20; $i++) {
-            Product::create([
-                'name' => "Product $i",
-                'sku' => 'SKU-' . str_pad($i, 3, '0', STR_PAD_LEFT),
-                'price' => $i * 100,
-                'stock' => $i * 10,
-            ]);
-        }
+
+        // Regular users assigned to random departments & roles
+        $departments = [$hr, $it, $finance];
+        $roles       = [$manager, $staff, $supervisor];
+
+        $user1 = User::create([
+            'name'          => 'User One',
+            'email'         => 'user1@test.com',
+            'password'      => Hash::make('password'),
+            'department_id' => $hr->id,
+            'role_id'       => $staff->id,
+            'is_admin'      => false,
+        ]);
+
+        $user2 = User::create([
+            'name'          => 'User Two',
+            'email'         => 'user2@test.com',
+            'password'      => Hash::make('password'),
+            'department_id' => $it->id,
+            'role_id'       => $manager->id,
+            'is_admin'      => false,
+        ]);
+
+        $user3 = User::create([
+            'name'          => 'User Three',
+            'email'         => 'user3@test.com',
+            'password'      => Hash::make('password'),
+            'department_id' => $finance->id,
+            'role_id'       => $supervisor->id,
+            'is_admin'      => false,
+        ]);
+
+        // ─── Applications ─────────────────────────────────────────────────────
+        $apps = Application::insert([
+            [
+                'name'        => 'ERP System',
+                'url'         => 'https://erp.internal',
+                'icon'        => 'pi pi-server',
+                'category'    => 'Enterprise',
+                'description' => 'Core enterprise resource planning system.',
+                'created_at'  => now(),
+                'updated_at'  => now(),
+            ],
+            [
+                'name'        => 'HRIS',
+                'url'         => 'https://hris.internal',
+                'icon'        => 'pi pi-users',
+                'category'    => 'HR',
+                'description' => 'Human Resource Information System.',
+                'created_at'  => now(),
+                'updated_at'  => now(),
+            ],
+            [
+                'name'        => 'Payroll',
+                'url'         => 'https://payroll.internal',
+                'icon'        => 'pi pi-wallet',
+                'category'    => 'Finance',
+                'description' => 'Employee payroll processing and management.',
+                'created_at'  => now(),
+                'updated_at'  => now(),
+            ],
+            [
+                'name'        => 'Support Desk',
+                'url'         => 'https://support.internal',
+                'icon'        => 'pi pi-headphones',
+                'category'    => 'Support',
+                'description' => 'Internal IT helpdesk and ticketing system.',
+                'created_at'  => now(),
+                'updated_at'  => now(),
+            ],
+            [
+                'name'        => 'Project Management',
+                'url'         => 'https://pm.internal',
+                'icon'        => 'pi pi-calendar',
+                'category'    => 'Productivity',
+                'description' => 'Track and manage projects across teams.',
+                'created_at'  => now(),
+                'updated_at'  => now(),
+            ],
+            [
+                'name'        => 'Document Management',
+                'url'         => 'https://dms.internal',
+                'icon'        => 'pi pi-file',
+                'category'    => 'Productivity',
+                'description' => 'Centralized document storage and version control.',
+                'created_at'  => now(),
+                'updated_at'  => now(),
+            ],
+            [
+                'name'        => 'Inventory Management',
+                'url'         => 'https://inventory.internal',
+                'icon'        => 'pi pi-box',
+                'category'    => 'Logistics',
+                'description' => 'Real-time inventory tracking and control.',
+                'created_at'  => now(),
+                'updated_at'  => now(),
+            ],
+            [
+                'name'        => 'CRM',
+                'url'         => 'https://crm.internal',
+                'icon'        => 'pi pi-briefcase',
+                'category'    => 'Sales',
+                'description' => 'Customer relationship management platform.',
+                'created_at'  => now(),
+                'updated_at'  => now(),
+            ],
+            [
+                'name'        => 'Business Intelligence',
+                'url'         => 'https://bi.internal',
+                'icon'        => 'pi pi-chart-bar',
+                'category'    => 'Analytics',
+                'description' => 'Data analytics and reporting dashboard.',
+                'created_at'  => now(),
+                'updated_at'  => now(),
+            ],
+            [
+                'name'        => 'Asset Management',
+                'url'         => 'https://assets.internal',
+                'icon'        => 'pi pi-desktop',
+                'category'    => 'IT',
+                'description' => 'Company asset tracking and lifecycle management.',
+                'created_at'  => now(),
+                'updated_at'  => now(),
+            ],
+        ]);
+
+        // Fetch created records by name for pivot seeding
+        $hris         = Application::where('name', 'HRIS')->first();
+        $erp          = Application::where('name', 'ERP System')->first();
+        $supportDesk  = Application::where('name', 'Support Desk')->first();
+
+        // ─── Pivot: Department Access ─────────────────────────────────────────
+        // HRIS → HR department
+        $hris->departments()->attach($hr->id);
+
+        // ─── Pivot: Role Access ───────────────────────────────────────────────
+        // ERP System → Manager role
+        $erp->roles()->attach($manager->id);
+
+        // ─── Pivot: Direct User Access ────────────────────────────────────────
+        // User 1 → Support Desk (direct access)
+        $supportDesk->users()->attach($user1->id);
     }
 }
