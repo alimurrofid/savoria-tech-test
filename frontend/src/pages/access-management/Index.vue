@@ -156,7 +156,7 @@ const resetFilters = () => {
 
 <template>
   <div class="max-w-7xl mx-auto space-y-6">
-    <div class="flex justify-between items-center">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div>
         <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Access Management</h1>
         <p class="text-sm text-slate-400 mt-1">
@@ -168,6 +168,7 @@ const resetFilters = () => {
         icon="pi pi-refresh"
         severity="secondary"
         text
+        class="w-full sm:w-auto"
         @click="resetFilters"
       />
     </div>

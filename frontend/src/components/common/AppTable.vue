@@ -19,6 +19,7 @@ defineProps<{
     :loading="loading"
     dataKey="id"
     emptyMessage="No records found."
+    responsiveLayout="scroll"
     v-bind="$attrs"
   >
     <slot></slot>

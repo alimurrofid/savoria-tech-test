@@ -34,10 +34,16 @@ const userMenuItems = ref([
 </script>
 
 <template>
-  <div class="min-h-screen bg-slate-50 flex font-sans">
+  <div class="min-h-screen bg-slate-50 flex font-sans relative">
+    <input type="checkbox" id="mobile-menu-toggle" class="peer hidden" />
+    <label
+      for="mobile-menu-toggle"
+      class="fixed inset-0 bg-slate-900/40 z-20 hidden peer-checked:block lg:hidden! backdrop-blur-sm cursor-pointer transition-opacity"
+    ></label>
+
     <aside
       :class="[
-        'bg-white border-r border-slate-100 flex flex-col fixed h-full z-20 transition-all duration-300 ease-in-out',
+        'bg-white border-r border-slate-100 flex flex-col fixed h-full z-40 transition-all duration-300 ease-in-out -translate-x-full peer-checked:translate-x-0 lg:translate-x-0',
         isSidebarCollapsed ? 'w-20' : 'w-64',
       ]"
     >
@@ -260,18 +266,24 @@ const userMenuItems = ref([
     <!-- Main Content -->
     <div
       :class="[
-        'flex-1 flex flex-col min-w-0 transition-all duration-300 ease-in-out',
-        isSidebarCollapsed ? 'ml-20' : 'ml-64',
+        'flex-1 flex flex-col min-w-0 transition-all duration-300 ease-in-out w-full',
+        isSidebarCollapsed ? 'lg:ml-20' : 'lg:ml-64',
       ]"
     >
       <!-- Topbar -->
       <header
-        class="h-16 bg-white/80 backdrop-blur-md flex items-center justify-between px-8 sticky top-0 z-10 shadow-[0_1px_2px_0_rgba(0,0,0,0.03)] border-b border-slate-50"
+        class="h-16 bg-white/80 backdrop-blur-md flex items-center justify-between px-4 lg:px-8 sticky top-0 z-10 shadow-[0_1px_2px_0_rgba(0,0,0,0.03)] border-b border-slate-50"
       >
         <!-- Left: sidebar toggle -->
+        <label
+          for="mobile-menu-toggle"
+          class="lg:hidden w-10 h-10 flex items-center justify-center rounded-xl text-slate-500 hover:bg-slate-50 transition-all active:scale-95 cursor-pointer"
+        >
+          <i class="pi pi-bars text-lg"></i>
+        </label>
         <button
           @click="toggleSidebar"
-          class="w-10 h-10 flex items-center justify-center rounded-xl text-slate-500 hover:bg-slate-50 transition-all active:scale-95"
+          class="hidden lg:flex w-10 h-10 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-50 transition-all active:scale-95"
         >
           <i
             :class="[
@@ -301,7 +313,7 @@ const userMenuItems = ref([
         </div>
       </header>
 
-      <main class="flex-1 p-8">
+      <main class="flex-1 p-4 lg:p-8">
         <RouterView />
         <Toast />
         <ConfirmDialog />

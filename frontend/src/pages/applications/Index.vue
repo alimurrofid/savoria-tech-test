@@ -5,7 +5,6 @@ import Column from 'primevue/column';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import Tag from 'primevue/tag';
-import ConfirmDialog from 'primevue/confirmdialog';
 import { FilterMatchMode } from '@primevue/core/api';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
@@ -85,13 +84,17 @@ const handleDelete = (row: Application) => {
 
 <template>
   <div class="max-w-7xl mx-auto space-y-6">
-
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div>
         <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Applications</h1>
         <p class="text-sm text-slate-400 mt-1">Manage the master list of applications</p>
       </div>
-      <Button label="Add Application" icon="pi pi-plus" @click="openCreate" />
+      <Button
+        label="Add Application"
+        icon="pi pi-plus"
+        class="w-full sm:w-auto"
+        @click="openCreate"
+      />
     </div>
 
     <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
@@ -102,6 +105,7 @@ const handleDelete = (row: Application) => {
         :loading="loading"
         :paginator="true"
         :rows="10"
+        responsiveLayout="scroll"
         v-model:filters="filters"
         :globalFilterFields="['name', 'category']"
         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
@@ -111,13 +115,17 @@ const handleDelete = (row: Application) => {
         class="text-sm"
       >
         <template #header>
-          <div class="flex flex-wrap gap-2 items-center justify-between">
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <span class="text-sm text-slate-400 font-medium">{{ records.length }} total</span>
-            <IconField iconPosition="left">
+            <IconField iconPosition="left" class="w-full sm:w-auto">
               <InputIcon>
                 <i class="pi pi-search" />
               </InputIcon>
-              <InputText v-model="filters['global'].value" placeholder="Search..." class="w-64" />
+              <InputText
+                v-model="filters['global'].value"
+                placeholder="Search..."
+                class="w-full sm:w-64"
+              />
             </IconField>
           </div>
         </template>

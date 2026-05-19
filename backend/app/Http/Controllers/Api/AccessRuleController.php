@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdateAccessRuleRequest;
 use App\Http\Resources\ApplicationResource;
 use App\Models\Application;
 use App\Models\Department;
@@ -10,8 +11,6 @@ use App\Models\Role;
 use App\Models\User;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class AccessRuleController extends Controller
 {
@@ -52,16 +51,12 @@ class AccessRuleController extends Controller
      *
      * PUT /api/access-rules/{type}/{id}
      */
-    public function update(Request $request, string $type, int $id): JsonResponse
+    public function update(UpdateAccessRuleRequest $request, string $type, int $id): JsonResponse
     {
-        $request->validate([
-            'application_ids'   => ['required', 'array'],
-            'application_ids.*' => ['integer', Rule::exists('applications', 'id')],
-        ]);
-
         $entity = $this->resolveEntity($type, $id);
+        $validatedData = $request->validated();
 
-        $entity->applications()->sync($request->input('application_ids', []));
+        $entity->applications()->sync($validatedData['application_ids']);
 
         $updated = $entity->applications()->get();
 

@@ -177,7 +177,9 @@ const handleSave = async () => {
               class="w-full"
               :class="{ 'p-invalid': errors.password_confirmation }"
             />
-            <small v-if="errors.password_confirmation" class="text-red-500 text-xs">{{ errors.password_confirmation }}</small>
+            <small v-if="errors.password_confirmation" class="text-red-500 text-xs">{{
+              errors.password_confirmation
+            }}</small>
           </div>
         </div>
 

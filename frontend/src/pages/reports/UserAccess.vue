@@ -43,7 +43,7 @@ onMounted(fetchRecords);
 
 <template>
   <div class="max-w-7xl mx-auto space-y-6">
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div>
         <h1 class="text-2xl font-bold text-slate-800 tracking-tight">User Access Report</h1>
         <p class="text-sm text-slate-400 mt-1">View the applications each user has access to</p>
@@ -58,6 +58,7 @@ onMounted(fetchRecords);
         :loading="loading"
         :paginator="true"
         :rows="10"
+        responsiveLayout="scroll"
         v-model:filters="filters"
         :globalFilterFields="['name', 'email']"
         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
@@ -67,16 +68,16 @@ onMounted(fetchRecords);
         class="text-sm"
       >
         <template #header>
-          <div class="flex flex-wrap gap-2 items-center justify-between">
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <span class="text-sm text-slate-400 font-medium">{{ records.length }} total</span>
-            <IconField iconPosition="left">
+            <IconField iconPosition="left" class="w-full sm:w-auto">
               <InputIcon>
                 <i class="pi pi-search" />
               </InputIcon>
               <InputText
                 v-model="filters['global'].value"
                 placeholder="Search users..."
-                class="w-64"
+                class="w-full sm:w-64"
               />
             </IconField>
           </div>

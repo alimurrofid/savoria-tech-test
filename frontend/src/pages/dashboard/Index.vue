@@ -54,7 +54,7 @@ const iconBg = (category: string | null): string => {
 <template>
   <div class="max-w-7xl mx-auto space-y-6">
     <!-- Page Header -->
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div>
         <h1 class="text-2xl font-bold text-slate-800 tracking-tight">My Applications</h1>
         <p class="text-sm text-slate-400 mt-1">All applications you have access to</p>
@@ -68,7 +68,7 @@ const iconBg = (category: string | null): string => {
     </div>
 
     <!-- Loading Skeleton -->
-    <div v-if="loading" class="grid grid-cols-2 md:grid-cols-4 gap-6">
+    <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
       <div
         v-for="n in 8"
         :key="n"
@@ -95,7 +95,7 @@ const iconBg = (category: string | null): string => {
     </div>
 
     <!-- Application Grid -->
-    <div v-else class="grid grid-cols-2 md:grid-cols-4 gap-6">
+    <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
       <a
         v-for="app in apps"
         :key="app.application_id"
